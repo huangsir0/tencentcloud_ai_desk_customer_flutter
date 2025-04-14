@@ -1,6 +1,6 @@
 name: tencentcloud_ai_desk_customer
 description: AI-driven customer service UIKit for Tencent Cloud Desk (customer-side).
-version: 1.2.1
+version: 1.2.3
 homepage: https://cloud.tencent.com/document/product/269/96056?from=flutter
 repository: https://github.com/RoleWong/tencentcloud_ai_desk_customer_flutter
 documentation: https://cloud.tencent.com/document/product/269/113293?from=flutter

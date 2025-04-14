@@ -1,3 +1,20 @@
+# 1.2.3
+
+## Fixed
+
+- Resolved an issue where a new conversation would automatically start after the previous session ended.
+
+## Optimized
+
+- Improved the layout of evaluation messages.
+- Improved the layout for quoted messages within the Workspace display.
+
+# 1.2.2
+
+## Added
+
+- Added a new animated loading indicator for the bot’s "thinking" state.
+
 # 1.2.1
 
 ## Fixed
