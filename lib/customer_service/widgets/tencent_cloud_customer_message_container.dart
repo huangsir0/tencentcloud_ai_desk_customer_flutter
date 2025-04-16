@@ -131,7 +131,9 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
         type: 1,
       );
     }
-    _customerServiceConversation = targetConversation;
+    setState(() {
+      _customerServiceConversation = targetConversation;
+    });
     _sendStartMessage(0);
     return targetConversation;
   }

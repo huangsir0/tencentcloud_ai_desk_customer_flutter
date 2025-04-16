@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:math';
@@ -18,34 +19,19 @@ class MessageLoading extends StatefulWidget{
   State<MessageLoading> createState() => _MessageLoadingState();
 }
 
-class _MessageLoadingState extends State<MessageLoading> with SingleTickerProviderStateMixin {
+class _MessageLoadingState extends State<MessageLoading> {
   final TCustomerMessageService _messageService = serviceLocator<TCustomerMessageService>();
   late AnimationController _controller;
   late Animation<int> _dotAnimation;
-  int dotAmounts = 0;
+  int dotAmounts = 1;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
 
-    _setLoadingDisappear();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000), // 一整组动画时间
-    )..repeat();
-
-    _dotAnimation = TweenSequence<int>([
-      TweenSequenceItem(tween: ConstantTween(0), weight: 1),
-      TweenSequenceItem(tween: ConstantTween(1), weight: 1),
-      TweenSequenceItem(tween: ConstantTween(2), weight: 1),
-      TweenSequenceItem(tween: ConstantTween(3), weight: 1),
-      // TweenSequenceItem(tween: ConstantTween(0), weight: 1),
-    ]).animate(_controller)
-      ..addListener(() {
-        setState(() {
-          dotAmounts = _dotAnimation.value;
-        });
-      });
+    // _setLoadingDisappear();
+    _setupTimer();
   }
 
   _setLoadingDisappear() {
@@ -64,9 +50,26 @@ class _MessageLoadingState extends State<MessageLoading> with SingleTickerProvid
     }
   }
 
+  _endTimer(){
+    if(_timer != null){
+      _timer?.cancel();
+      _timer = null;
+    }
+  }
+
+  _setupTimer(){
+    _timer = Timer.periodic(const Duration(milliseconds: 300), (_) {
+      setState(() {
+        dotAmounts = (dotAmounts + 1) % 4; // 循环 0~3
+        print("dotAmounts - $dotAmounts");
+      });
+    });
+  }
+
   @override
   void dispose() {
-    _controller.dispose();
+    // _controller.dispose();
+    _endTimer();
     super.dispose();
   }
 
