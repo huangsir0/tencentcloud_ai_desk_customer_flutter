@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -6,8 +7,8 @@ import 'package:tencent_cloud_chat_sdk/models/v2_tim_msg_create_info_result.dart
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_state.dart';
+import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
-
 
 class MessageBranchNew extends StatefulWidget {
   final TUITheme theme;
@@ -47,7 +48,9 @@ class _MessageBranchNewState extends TIMState<MessageBranchNew> {
 
   /// Handles the item click event
   Future<V2TimMsgCreateInfoResult?> _onClickItem({required String text}) async {
-    final res = await TencentImSDKPlugin.v2TIMManager.getMessageManager().createTextMessage(text: text);
+    final res = await TencentImSDKPlugin.v2TIMManager
+        .getMessageManager()
+        .createTextMessage(text: text);
     if (res.code == 0) {
       final messageResult = res.data;
       V2TimMessage? messageInfo = messageResult?.messageInfo;
@@ -56,9 +59,18 @@ class _MessageBranchNewState extends TIMState<MessageBranchNew> {
       if (!kIsWeb && (Platform.isMacOS || Platform.isWindows)) {
         messageInfo?.id = messageResult?.id;
       }
+      String cloudCustomData = "";
+      if (widget.payload["optionType"] == 1) {
+        cloudCustomData = json.encode({
+          "BranchOptionInfo": widget.payload["taskInfo"]
+        });
+      }
 
       // Trigger the onClickItem callback
-      widget.onClickItem(messageInfo: messageInfo);
+      widget.onClickItem(
+        messageInfo: messageInfo,
+        cloudCustomData: TencentDeskUtils.checkString(cloudCustomData),
+      );
 
       return messageResult;
     }
@@ -67,7 +79,9 @@ class _MessageBranchNewState extends TIMState<MessageBranchNew> {
 
   /// Builds the list of selectable questions
   Widget _buildQuestionsList(List<dynamic> list) {
-    if (_selected) return Container(); // Return an empty container if already selected
+    if (_selected && widget.payload["optionType"] != 1) {
+      return Container(); // Return an empty container if already selected
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +99,8 @@ class _MessageBranchNewState extends TIMState<MessageBranchNew> {
               margin: const EdgeInsets.only(top: 10),
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
               decoration: BoxDecoration(
-                color: widget.messageBackgroundColor ?? widget.theme.weakBackgroundColor,
+                color: widget.messageBackgroundColor ??
+                    widget.theme.weakBackgroundColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: const Color(0xFF006EFF).withOpacity(0.3),
@@ -107,7 +122,8 @@ class _MessageBranchNewState extends TIMState<MessageBranchNew> {
   Widget timBuild(BuildContext context) {
     final header = widget.payload['header'] ?? ""; // Message header
     final list = widget.payload['items'] ?? []; // List of selectable items
-    final backgroundColor = widget.messageBackgroundColor ?? widget.theme.weakBackgroundColor;
+    final backgroundColor =
+        widget.messageBackgroundColor ?? widget.theme.weakBackgroundColor;
 
     // Header decoration
     const defaultBorderRadius = BorderRadius.only(
@@ -135,7 +151,9 @@ class _MessageBranchNewState extends TIMState<MessageBranchNew> {
             ),
           ),
           // Display selectable questions
-          if(widget.payload["status"] == 0) _buildQuestionsList(list),
+          if ((widget.payload["status"] == 0 && !_selected) ||
+              widget.payload["optionType"] == 1)
+            _buildQuestionsList(list),
         ],
       ),
     );

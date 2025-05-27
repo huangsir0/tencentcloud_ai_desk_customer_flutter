@@ -202,6 +202,8 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
         try {
           payload = mapData["content"];
           payload["status"] = mapData["status"];
+          payload["optionType"] = mapData["optionType"] ?? 0;
+          payload["taskInfo"] = mapData["taskInfo"];
         } catch (err) {
         }
         return MessageBranchNew(

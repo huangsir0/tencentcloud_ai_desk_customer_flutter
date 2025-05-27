@@ -1,4 +1,10 @@
 
+# 1.3.1
+
+## Added
+
+- Added support for fixed options in branch messages.
+
 # 1.3.0
 
 ## Breaking Changes

@@ -104,9 +104,9 @@ class _MessageFormInputStateMobile extends TIMState<MessageFormInputMobile> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF1C66E5),
-                      borderRadius: BorderRadius.horizontal(
+                    decoration: BoxDecoration(
+                      color: nodeStatus == 1 ? Colors.grey : const Color(0xFF1C66E5),
+                      borderRadius: const BorderRadius.horizontal(
                         left: Radius.circular(20),
                         right: Radius.circular(20),
                       ),
