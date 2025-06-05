@@ -3,6 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_sound_elem.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_sound_elem.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/separate_models/tui_chat_separate_view_model.dart';
@@ -13,10 +17,6 @@ import 'package:tencentcloud_ai_desk_customer/theme/color.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/constants/history_message_constant.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/platform.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/sound_record.dart';
-
-
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_sound_elem.dart';
 import 'TIMUIKitMessageReaction/tim_uikit_message_reaction_show_panel.dart';
 
 class TIMUIKitSoundElem extends StatefulWidget {

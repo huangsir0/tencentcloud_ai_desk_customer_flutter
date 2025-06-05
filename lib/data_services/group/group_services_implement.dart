@@ -4,10 +4,14 @@ import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dar
 import 'package:tencentcloud_ai_desk_customer/ui/utils/optimize_utils.dart';
 import 'package:tencent_cloud_chat_sdk/enum/V2TimGroupListener.dart';
 import 'package:tencent_cloud_chat_sdk/enum/group_member_filter_enum.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_info_result.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_info_result.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_info_result.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_info_result.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_info_result.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_info_result.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_value_callback.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_callback.dart';
 
@@ -38,16 +42,12 @@ class TCustomerGroupServicesImpl extends TCustomerGroupServices {
   Future<List<V2TimGroupInfoResult>?> getGroupsInfo({
     required List<String> groupIDList,
   }) async {
-    final res = await TencentImSDKPlugin.v2TIMManager
-        .getGroupManager()
-        .getGroupsInfo(groupIDList: groupIDList);
+    final res = await TencentImSDKPlugin.v2TIMManager.getGroupManager().getGroupsInfo(groupIDList: groupIDList);
     if (res.code == 0) {
       return res.data;
     } else {
-      _coreService.callOnCallback(TIMCallback(
-          type: TIMCallbackType.API_ERROR,
-          errorMsg: res.desc,
-          errorCode: res.code));
+      _coreService
+          .callOnCallback(TIMCallback(type: TIMCallbackType.API_ERROR, errorMsg: res.desc, errorCode: res.code));
       return null;
     }
   }
@@ -62,17 +62,10 @@ class TCustomerGroupServicesImpl extends TCustomerGroupServices {
   }) async {
     final res = await TencentImSDKPlugin.v2TIMManager
         .getGroupManager()
-        .getGroupMemberList(
-            groupID: groupID,
-            filter: filter,
-            nextSeq: nextSeq,
-            count: count,
-            offset: offset);
+        .getGroupMemberList(groupID: groupID, filter: filter, nextSeq: nextSeq, count: count, offset: offset);
     if (res.code != 0) {
-      _coreService.callOnCallback(TIMCallback(
-          type: TIMCallbackType.API_ERROR,
-          errorMsg: res.desc,
-          errorCode: res.code));
+      _coreService
+          .callOnCallback(TIMCallback(type: TIMCallbackType.API_ERROR, errorMsg: res.desc, errorCode: res.code));
     }
     return res;
   }
@@ -81,8 +74,7 @@ class TCustomerGroupServicesImpl extends TCustomerGroupServices {
   Future<void> addGroupListener({
     required V2TimGroupListener listener,
   }) async {
-    final result = await TencentImSDKPlugin.v2TIMManager
-        .addGroupListener(listener: listener);
+    final result = await TencentImSDKPlugin.v2TIMManager.addGroupListener(listener: listener);
     return result;
   }
 
@@ -90,8 +82,7 @@ class TCustomerGroupServicesImpl extends TCustomerGroupServices {
   Future<void> removeGroupListener({
     V2TimGroupListener? listener,
   }) async {
-    final result = await TencentImSDKPlugin.v2TIMManager
-        .removeGroupListener(listener: listener);
+    final result = await TencentImSDKPlugin.v2TIMManager.removeGroupListener(listener: listener);
     return result;
   }
 }

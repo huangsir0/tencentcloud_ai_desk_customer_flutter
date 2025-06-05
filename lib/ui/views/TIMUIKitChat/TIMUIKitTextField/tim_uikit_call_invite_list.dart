@@ -6,7 +6,8 @@ import 'package:tencentcloud_ai_desk_customer/data_services/group/group_services
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
 import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 import 'package:tencent_cloud_chat_sdk/enum/group_member_filter_enum.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_full_info.dart';
 
 import 'package:tencentcloud_ai_desk_customer/ui/widgets/group_member_list.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
@@ -51,16 +52,13 @@ class _SelectCallInviterState extends TIMUIKitState<SelectCallInviter> {
     return searchText != null && searchText != "";
   }
 
-  Future<void> _loadGroupMemberList(
-      {required String groupID, int count = 100, String? seq}) async {
+  Future<void> _loadGroupMemberList({required String groupID, int count = 100, String? seq}) async {
     if (seq == null || seq == "" || seq == "0") {
       _groupMemberList = [];
     }
-    final String? nextSeq = await _loadGroupMemberListFunction(
-        groupID: groupID, seq: seq, count: count);
+    final String? nextSeq = await _loadGroupMemberListFunction(groupID: groupID, seq: seq, count: count);
     if (nextSeq != null && nextSeq != "0" && nextSeq != "") {
-      return await _loadGroupMemberList(
-          groupID: groupID, count: count, seq: nextSeq);
+      return await _loadGroupMemberList(groupID: groupID, count: count, seq: nextSeq);
     } else {
       setState(() {
         _groupMemberList = _groupMemberList;
@@ -70,8 +68,7 @@ class _SelectCallInviterState extends TIMUIKitState<SelectCallInviter> {
     }
   }
 
-  Future<String?> _loadGroupMemberListFunction(
-      {required String groupID, int count = 100, String? seq}) async {
+  Future<String?> _loadGroupMemberListFunction({required String groupID, int count = 100, String? seq}) async {
     if (seq == "0") {
       _groupMemberList?.clear();
     }
@@ -99,8 +96,7 @@ class _SelectCallInviterState extends TIMUIKitState<SelectCallInviter> {
           iconTheme: IconThemeData(
             color: theme.appbarTextColor,
           ),
-          backgroundColor: theme.appbarBgColor ??
-              theme.primaryColor,
+          backgroundColor: theme.appbarBgColor ?? theme.primaryColor,
           leading: TextButton(
             onPressed: () {
               Navigator.pop(context);
@@ -143,8 +139,7 @@ class _SelectCallInviterState extends TIMUIKitState<SelectCallInviter> {
             ? GroupProfileMemberList(
                 customTopArea: null,
                 memberList: (searchMemberList ?? [])
-                    .where((element) =>
-                        element?.userID != _coreServicesImpl.loginInfo.userID)
+                    .where((element) => element?.userID != _coreServicesImpl.loginInfo.userID)
                     .toList(),
                 canSlideDelete: false,
                 canSelectMember: true,

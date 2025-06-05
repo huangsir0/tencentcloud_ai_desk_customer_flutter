@@ -28,7 +28,8 @@ import 'package:tencentcloud_ai_desk_customer/ui/widgets/link_preview/widgets/li
 import 'package:tencentcloud_ai_desk_customer/ui/utils/logger.dart';
 import 'package:tencent_cloud_chat_sdk/enum/message_elem_type.dart';
 import 'package:tencent_cloud_chat_sdk/enum/message_status.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 import 'package:tim_ui_kit_sticker_plugin/utils/tim_custom_face_data.dart';

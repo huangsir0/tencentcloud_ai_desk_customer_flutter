@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
+import 'package:tencent_desk_i18n_tool/tencent_desk_i18n_tool.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_self_info_view_model.dart';
-import 'package:tencentcloud_ai_desk_customer/data_services/group/group_services.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
-
 import 'package:tencentcloud_ai_desk_customer/ui/utils/screen_utils.dart';
-import 'package:tencent_desk_i18n_tool/tencent_desk_i18n_tool.dart';
-
-
 import 'package:tencentcloud_ai_desk_customer/ui/widgets/group_member_list.dart';
-
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_search_param.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_search_result.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 
 class AtText extends StatefulWidget {
@@ -46,7 +40,6 @@ class AtText extends StatefulWidget {
 }
 
 class _AtTextState extends TIMUIKitState<AtText> {
-  final TCustomerGroupServices _groupServices = serviceLocator<TCustomerGroupServices>();
   final TCustomerSelfInfoViewModel _selfInfoViewModel = serviceLocator<TCustomerSelfInfoViewModel>();
 
   List<V2TimGroupMemberFullInfo?>? groupMemberList;

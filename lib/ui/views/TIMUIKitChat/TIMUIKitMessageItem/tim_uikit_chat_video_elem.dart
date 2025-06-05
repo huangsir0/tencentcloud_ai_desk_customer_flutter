@@ -16,8 +16,10 @@ import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitMess
 import 'package:tencentcloud_ai_desk_customer/ui/widgets/video_screen.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/widgets/wide_popup.dart';
 import 'package:tencent_cloud_chat_sdk/enum/message_status.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_video_elem.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_video_elem.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_video_elem.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -79,21 +81,18 @@ class _TIMUIKitVideoElemState extends TIMUIKitState<TIMUIKitVideoElem> {
       final current = (DateTime.now().millisecondsSinceEpoch / 1000).ceil();
       final timeStamp = widget.message.timestamp ?? current;
       if (current - timeStamp < 300) {
-        if (stateElement.snapshotPath != null &&
-            stateElement.snapshotPath != '') {
+        if (stateElement.snapshotPath != null && stateElement.snapshotPath != '') {
           File imgF = File(stateElement.snapshotPath!);
           bool isExist = imgF.existsSync();
           if (isExist) {
-            return Image.file(File(stateElement.snapshotPath!),
-                fit: BoxFit.fitWidth);
+            return Image.file(File(stateElement.snapshotPath!), fit: BoxFit.fitWidth);
           }
         }
       }
     }
 
     if ((stateElement.snapshotUrl == null || stateElement.snapshotUrl == '') &&
-        (stateElement.snapshotPath == null ||
-            stateElement.snapshotPath == '')) {
+        (stateElement.snapshotPath == null || stateElement.snapshotPath == '')) {
       return Container(
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(5)),
@@ -119,22 +118,16 @@ class _TIMUIKitVideoElemState extends TIMUIKitState<TIMUIKitVideoElem> {
             widget.message.status == MessageStatus.V2TIM_MSG_STATUS_SENDING)
         ? (stateElement.snapshotPath!.isNotEmpty
             ? Image.file(File(stateElement.snapshotPath!), fit: BoxFit.fitWidth)
-            : Image.file(File(stateElement.localSnapshotUrl!),
-                fit: BoxFit.fitWidth))
-        : (PlatformUtils().isWeb ||
-                stateElement.localSnapshotUrl == null ||
-                stateElement.localSnapshotUrl == "")
+            : Image.file(File(stateElement.localSnapshotUrl!), fit: BoxFit.fitWidth))
+        : (PlatformUtils().isWeb || stateElement.localSnapshotUrl == null || stateElement.localSnapshotUrl == "")
             ? Image.network(stateElement.snapshotUrl!, fit: BoxFit.fitWidth)
-            : Image.file(File(stateElement.localSnapshotUrl!),
-                fit: BoxFit.fitWidth);
+            : Image.file(File(stateElement.localSnapshotUrl!), fit: BoxFit.fitWidth);
   }
 
   downloadMessageDetailAndSave() async {
     if (TencentDeskUtils.checkString(widget.message.msgID) != null) {
-      if (TencentDeskUtils.checkString(widget.message.videoElem!.videoUrl) ==
-          null) {
-        final response = await _messageService.getMessageOnlineUrl(
-            msgID: widget.message.msgID!);
+      if (TencentDeskUtils.checkString(widget.message.videoElem!.videoUrl) == null) {
+        final response = await _messageService.getMessageOnlineUrl(msgID: widget.message.msgID!);
         if (response.data != null) {
           widget.message.videoElem = response.data!.videoElem;
           Future.delayed(const Duration(microseconds: 10), () {
@@ -143,24 +136,14 @@ class _TIMUIKitVideoElemState extends TIMUIKitState<TIMUIKitVideoElem> {
         }
       }
       if (!PlatformUtils().isWeb) {
-        if (TencentDeskUtils.checkString(widget.message.videoElem!.localVideoUrl) ==
-                null ||
+        if (TencentDeskUtils.checkString(widget.message.videoElem!.localVideoUrl) == null ||
             !File(widget.message.videoElem!.localVideoUrl!).existsSync()) {
           _messageService.downloadMessage(
-              msgID: widget.message.msgID!,
-              messageType: 5,
-              imageType: 0,
-              isSnapshot: false);
+              msgID: widget.message.msgID!, messageType: 5, imageType: 0, isSnapshot: false);
         }
-        if (TencentDeskUtils.checkString(
-                    widget.message.videoElem!.localSnapshotUrl) ==
-                null ||
+        if (TencentDeskUtils.checkString(widget.message.videoElem!.localSnapshotUrl) == null ||
             !File(widget.message.videoElem!.localSnapshotUrl!).existsSync()) {
-          _messageService.downloadMessage(
-              msgID: widget.message.msgID!,
-              messageType: 5,
-              imageType: 0,
-              isSnapshot: true);
+          _messageService.downloadMessage(msgID: widget.message.msgID!, messageType: 5, imageType: 0, isSnapshot: true);
         }
       }
     }
@@ -180,7 +163,6 @@ class _TIMUIKitVideoElemState extends TIMUIKitState<TIMUIKitVideoElem> {
     }
   }
 
-
   @override
   Widget tuiBuild(BuildContext context, TUIKitBuildValue value) {
     final theme = value.theme;
@@ -195,16 +177,15 @@ class _TIMUIKitVideoElemState extends TIMUIKitState<TIMUIKitVideoElem> {
               context: context,
               mediaURL: url,
               onClickOrigin: () => launchUrl(
-                Uri.parse(url),
-                mode: LaunchMode.externalApplication,
-              ));
+                    Uri.parse(url),
+                    mode: LaunchMode.externalApplication,
+                  ));
           return;
         }
         if (PlatformUtils().isDesktop) {
           final videoElem = widget.message.videoElem;
           if (videoElem != null) {
-            final localVideoUrl =
-                TencentDeskUtils.checkString(videoElem.localVideoUrl);
+            final localVideoUrl = TencentDeskUtils.checkString(videoElem.localVideoUrl);
             final videoPath = TencentDeskUtils.checkString(videoElem.videoPath);
             final videoUrl = videoElem.videoUrl;
             if (localVideoUrl != null) {
@@ -222,10 +203,8 @@ class _TIMUIKitVideoElemState extends TIMUIKitState<TIMUIKitVideoElem> {
               //     mediaPath: videoPath,
               //     onClickOrigin: () => launchDesktopFile(videoPath));
             } else if (TencentDeskUtils.isTextNotEmpty(videoUrl)) {
-              onTIMCallback(TIMCallback(
-                  infoCode: 6660414,
-                  infoRecommendText: TDesk_t("正在下载中"),
-                  type: TIMCallbackType.INFO));
+              onTIMCallback(
+                  TIMCallback(infoCode: 6660414, infoRecommendText: TDesk_t("正在下载中"), type: TIMCallbackType.INFO));
             }
           }
         } else {
@@ -252,67 +231,50 @@ class _TIMUIKitVideoElemState extends TIMUIKitState<TIMUIKitVideoElem> {
               isFromSelf: widget.message.isSelf ?? true,
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
-                child: LayoutBuilder(builder:
-                    (BuildContext context, BoxConstraints constraints) {
+                child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                   double? positionRadio;
                   if ((stateElement.snapshotWidth) != null &&
                       stateElement.snapshotHeight != null &&
                       stateElement.snapshotWidth != 0 &&
                       stateElement.snapshotHeight != 0) {
-                    positionRadio = (stateElement.snapshotWidth! /
-                        stateElement.snapshotHeight!);
+                    positionRadio = (stateElement.snapshotWidth! / stateElement.snapshotHeight!);
                   }
                   return ConstrainedBox(
                       constraints: BoxConstraints(
-                          maxWidth: PlatformUtils().isWeb
-                              ? 300
-                              : constraints.maxWidth * 0.5,
+                          maxWidth: PlatformUtils().isWeb ? 300 : constraints.maxWidth * 0.5,
                           maxHeight: min(constraints.maxHeight * 0.8, 300),
                           minHeight: 20,
                           minWidth: 20),
                       child: Stack(
                         children: <Widget>[
                           if (positionRadio != null &&
-                              (stateElement.snapshotUrl != null ||
-                                  stateElement.snapshotUrl != null))
+                              (stateElement.snapshotUrl != null || stateElement.snapshotUrl != null))
                             AspectRatio(
                               aspectRatio: positionRadio,
                               child: Container(
-                                decoration: const BoxDecoration(
-                                    color: Colors.transparent),
+                                decoration: const BoxDecoration(color: Colors.transparent),
                               ),
                             ),
                           Row(
-                            children: [
-                              Expanded(
-                                  child: generateSnapshot(theme,
-                                      stateElement.snapshotHeight ?? 100))
-                            ],
+                            children: [Expanded(child: generateSnapshot(theme, stateElement.snapshotHeight ?? 100))],
                           ),
-                          if (widget.message.status !=
-                                      MessageStatus.V2TIM_MSG_STATUS_SENDING &&
-                                  (stateElement.snapshotUrl != null ||
-                                      stateElement.snapshotPath != null) &&
+                          if (widget.message.status != MessageStatus.V2TIM_MSG_STATUS_SENDING &&
+                                  (stateElement.snapshotUrl != null || stateElement.snapshotPath != null) &&
                                   stateElement.videoPath != null ||
                               stateElement.videoUrl != null)
                             Positioned.fill(
                               // alignment: Alignment.center,
                               child: Center(
-                                  child: Image.asset('images/play.png',
-                                      package: 'tencentcloud_ai_desk_customer',
-                                      height: 64)),
+                                  child:
+                                      Image.asset('images/play.png', package: 'tencentcloud_ai_desk_customer', height: 64)),
                             ),
-                          if (widget.message.videoElem?.duration != null &&
-                              widget.message.videoElem!.duration! > 0)
+                          if (widget.message.videoElem?.duration != null && widget.message.videoElem!.duration! > 0)
                             Positioned(
                                 right: 10,
                                 bottom: 10,
                                 child: Text(
-                                    MessageUtils.formatVideoTime(widget
-                                                .message.videoElem!.duration!)
-                                        .toString(),
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 12))),
+                                    MessageUtils.formatVideoTime(widget.message.videoElem!.duration!).toString(),
+                                    style: const TextStyle(color: Colors.white, fontSize: 12))),
                         ],
                       ));
                 }),

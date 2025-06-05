@@ -6,13 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_desk_i18n_tool/tencent_desk_i18n_tool.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/separate_models/tui_chat_separate_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_chat_global_model.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_setting_model.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
-import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
+import 'package:tencentcloud_ai_desk_customer/theme/color.dart';
+import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/message.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/optimize_utils.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/permission.dart';
@@ -21,12 +25,13 @@ import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitText
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitTextField/special_text/emoji_text.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitTextField/tim_uikit_more_panel.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitTextField/tim_uikit_send_sound_message.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
-import 'package:tencentcloud_ai_desk_customer/theme/color.dart';
-import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 import 'package:tencent_keyboard_visibility/tencent_keyboard_visibility.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitTextField/tim_uikit_text_field.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitTextField/tim_uikit_text_field_controller.dart';
+import 'package:tim_ui_kit_sticker_plugin/constant/emoji.dart';
+import 'package:tim_ui_kit_sticker_plugin/ui/tim_ui_kit_sticker_panel.dart';
+import 'package:tim_ui_kit_sticker_plugin/utils/tim_custom_face_data.dart';
+import 'package:tim_ui_kit_sticker_plugin/utils/tim_ui_kit_sticker_data.dart';
 
 GlobalKey<_TIMUIKitTextFieldLayoutNarrowState> narrowTextFieldKey = GlobalKey();
 
@@ -265,7 +270,10 @@ class _TIMUIKitTextFieldLayoutNarrowState extends TIMUIKitState<TIMUIKitTextFiel
     }
 
     if (showMore) {
-      return MorePanel(morePanelConfig: widget.morePanelConfig, conversationID: widget.conversationID, conversationType: widget.conversationType);
+      return MorePanel(
+          morePanelConfig: widget.morePanelConfig,
+          conversationID: widget.conversationID,
+          conversationType: widget.conversationType);
     }
 
     return const SizedBox(height: 0);
@@ -340,7 +348,8 @@ class _TIMUIKitTextFieldLayoutNarrowState extends TIMUIKitState<TIMUIKitTextFiel
   }
 
   String getAbstractMessage(V2TimMessage message) {
-    final String? customAbstractMessage = widget.model.abstractMessageBuilder != null ? widget.model.abstractMessageBuilder!(message) : null;
+    final String? customAbstractMessage =
+        widget.model.abstractMessageBuilder != null ? widget.model.abstractMessageBuilder!(message) : null;
     return customAbstractMessage ?? MessageUtils.getAbstractMessageAsync(message, widget.model.groupMemberList ?? []);
   }
 
@@ -459,17 +468,19 @@ class _TIMUIKitTextFieldLayoutNarrowState extends TIMUIKitState<TIMUIKitTextFiel
                             width: 35,
                           ),
                         ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: showSendSoundText
-                              ? SendSoundMessage(onDownBottom: widget.goDownBottom, conversationID: widget.conversationID, conversationType: widget.conversationType)
-                              : Stack(
-                                  children: [
-                                    Center(
-                                      child: KeyboardVisibility(
-                                        child: ExtendedTextField(
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: showSendSoundText
+                            ? SendSoundMessage(
+                                onDownBottom: widget.goDownBottom,
+                                conversationID: widget.conversationID,
+                                conversationType: widget.conversationType)
+                            : Stack(children: [
+                                Center(
+                                  child: KeyboardVisibility(
+                                      child: ExtendedTextField(
                                           maxLines: 4,
                                           minLines: 1,
                                           focusNode: widget.focusNode,
@@ -483,7 +494,9 @@ class _TIMUIKitTextFieldLayoutNarrowState extends TIMUIKitState<TIMUIKitTextFiel
                                             });
                                           },
                                           keyboardType: TextInputType.multiline,
-                                          textInputAction: PlatformUtils().isAndroid ? TextInputAction.newline : TextInputAction.send,
+                                          textInputAction: PlatformUtils().isAndroid
+                                              ? TextInputAction.newline
+                                              : TextInputAction.send,
                                           onEditingComplete: () {
                                             widget.onSubmitted();
                                             if (showKeyboard) {
@@ -510,38 +523,47 @@ class _TIMUIKitTextFieldLayoutNarrowState extends TIMUIKitState<TIMUIKitTextFiel
                                           specialTextSpanBuilder: PlatformUtils().isWeb
                                               ? null
                                               : DefaultSpecialTextSpanBuilder(
-                                                  isUseQQPackage: widget.model.chatConfig.stickerPanelConfig?.useQQStickerPackage ?? true,
-                                                  isUseTencentCloudChatPackage: widget.model.chatConfig.stickerPanelConfig?.useTencentCloudChatStickerPackage ?? true,
-                                                  isUseTencentCloudChatPackageOldKeys: widget.model.chatConfig.stickerPanelConfig?.useTencentCloudChatStickerPackageOldKeys ?? false,
+                                                  isUseQQPackage:
+                                                      widget.model.chatConfig.stickerPanelConfig?.useQQStickerPackage ??
+                                                          true,
+                                                  isUseTencentCloudChatPackage: widget.model.chatConfig
+                                                          .stickerPanelConfig?.useTencentCloudChatStickerPackage ??
+                                                      true,
+                                                  isUseTencentCloudChatPackageOldKeys: widget
+                                                          .model
+                                                          .chatConfig
+                                                          .stickerPanelConfig
+                                                          ?.useTencentCloudChatStickerPackageOldKeys ??
+                                                      false,
                                                   customEmojiStickerList: widget.customEmojiStickerList,
                                                   showAtBackground: true,
                                                   checkHttpLink: false,
                                                 )),
-                                        onChanged: (bool visibility) {
-                                          if (showKeyboard != visibility) {
-                                            setState(() {
-                                              showKeyboard = visibility;
-                                            });
-                                          }
-                                      }),
-                                    ),
-                                    RawKeyboardListener(
-                                      autofocus: true,
-                                      focusNode: FocusNode(),
-                                      onKey: (key) {
-                                        if (key is RawKeyDownEvent && key.logicalKey == LogicalKeyboardKey.backspace) {
-                                          if (widget.onDeleteText != null) {
-                                            widget.onDeleteText!(widget.textEditingController.text);
-                                          }
+                                      onChanged: (bool visibility) {
+                                        if (showKeyboard != visibility) {
+                                          setState(() {
+                                            showKeyboard = visibility;
+                                          });
                                         }
-                                      }, child: Container(),
-                                    ),
-                                  ]
+                                      }),
                                 ),
-                        ),
+                                RawKeyboardListener(
+                                  autofocus: true,
+                                  focusNode: FocusNode(),
+                                  onKey: (key) {
+                                    if (key is RawKeyDownEvent && key.logicalKey == LogicalKeyboardKey.backspace) {
+                                      if (widget.onDeleteText != null) {
+                                        widget.onDeleteText!(widget.textEditingController.text);
+                                      }
+                                    }
+                                  },
+                                  child: Container(),
+                                ),
+                              ]),
+                      ),
                       const SizedBox(
-                          width: 10,
-                        ),
+                        width: 10,
+                      ),
                       if (widget.showSendEmoji)
                         InkWell(
                           onTap: () {
@@ -549,11 +571,8 @@ class _TIMUIKitTextFieldLayoutNarrowState extends TIMUIKitState<TIMUIKitTextFiel
                             widget.goDownBottom();
                           },
                           child: PlatformUtils().isWeb
-                              ? Icon(
-                            showEmojiPanel ? Icons.keyboard_alt_outlined : Icons.mood_outlined,
-                            color: hexToColor("5c6168"),
-                            size: 32,
-                          )
+                              ? Icon(showEmojiPanel ? Icons.keyboard_alt_outlined : Icons.mood_outlined,
+                                  color: hexToColor("5c6168"), size: 32)
                               : SvgPicture.asset(
                             showEmojiPanel ? 'images/keyboard.svg' : 'images/face.svg',
                             package: 'tencentcloud_ai_desk_customer',
@@ -563,8 +582,8 @@ class _TIMUIKitTextFieldLayoutNarrowState extends TIMUIKitState<TIMUIKitTextFiel
                           ),
                         ),
                       const SizedBox(
-                          width: 10,
-                        ),
+                        width: 10,
+                      ),
                       if (widget.showMorePanel && showMoreButton)
                         InkWell(
                           onTap: () {

@@ -30,7 +30,7 @@ class TencentCloudCustomerManager {
 
   V2TimCallback navigate({
     required BuildContext context,
-    required String customerServiceID,
+    String? customerServiceID,
     TencentCloudCustomerConfig? config,
   }) {
     return _tencentCloudCustomerManagerImpl.navigate(

@@ -16,6 +16,11 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_conversation.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_desk_i18n_tool/tencent_desk_i18n_tool.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/separate_models/tui_chat_separate_view_model.dart';
@@ -23,7 +28,7 @@ import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_cha
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_setting_model.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/core/tim_uikit_wide_modal_operation_key.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
-import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
+import 'package:tencentcloud_ai_desk_customer/ui/utils/common_utils.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/logger.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/message.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/optimize_utils.dart';
@@ -37,8 +42,10 @@ import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitText
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_chat_config.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/widgets/drag_widget.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/widgets/wide_popup.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
+import 'package:tim_ui_kit_sticker_plugin/constant/emoji.dart';
+import 'package:tim_ui_kit_sticker_plugin/ui/tim_ui_kit_sticker_panel.dart';
+import 'package:tim_ui_kit_sticker_plugin/utils/tim_custom_face_data.dart';
+import 'package:tim_ui_kit_sticker_plugin/utils/tim_ui_kit_sticker_data.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
@@ -936,56 +943,55 @@ class _TIMUIKitTextFieldLayoutWideState extends TIMUIKitState<TIMUIKitTextFieldL
             children: [
               _buildRepliedMessage(widget.repliedMessage),
               SizedBox(height: 1, child: Container(color: theme.weakDividerColor ?? Colors.black12)),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: generateControlBar(widget.model, theme),
-                  ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: generateControlBar(widget.model, theme),
                 ),
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
                 constraints: const BoxConstraints(minHeight: 50),
                 child: Row(
                   children: [
-                      Expanded(
-                        child: ExtendedTextField(
-                            scrollController: _scrollController,
-                            autofocus: true,
-                            maxLines: widget.chatConfig.desktopMessageInputFieldLines,
-                            minLines: widget.chatConfig.desktopMessageInputFieldLines,
-                            focusNode: widget.focusNode,
-                            onChanged: debounceFunc,
-                            keyboardType: TextInputType.multiline,
-                            onEditingComplete: () {
-                              //   // widget.onSubmitted();
-                            },
-                            textAlignVertical: TextAlignVertical.top,
-                            style: const TextStyle(fontSize: 14),
-                            decoration: InputDecoration(
-                              hoverColor: Colors.transparent,
-                              border: InputBorder.none,
-                              hintStyle: const TextStyle(
-                                color: Color(0xffAEA4A3),
-                              ),
-                              fillColor: widget.backgroundColor ??
-                                  theme.desktopChatMessageInputBgColor ??
-                                  hexToColor("fafafa"),
-                              filled: true,
-                              isDense: true,
-                              hintText: widget.hintText ?? '',
+                    Expanded(
+                      child: ExtendedTextField(
+                          scrollController: _scrollController,
+                          autofocus: true,
+                          maxLines: widget.chatConfig.desktopMessageInputFieldLines,
+                          minLines: widget.chatConfig.desktopMessageInputFieldLines,
+                          focusNode: widget.focusNode,
+                          onChanged: debounceFunc,
+                          keyboardType: TextInputType.multiline,
+                          onEditingComplete: () {
+                            //   // widget.onSubmitted();
+                          },
+                          textAlignVertical: TextAlignVertical.top,
+                          style: const TextStyle(fontSize: 14),
+                          decoration: InputDecoration(
+                            hoverColor: Colors.transparent,
+                            border: InputBorder.none,
+                            hintStyle: const TextStyle(
+                              color: Color(0xffAEA4A3),
                             ),
-                            controller: widget.textEditingController,
-                            specialTextSpanBuilder: PlatformUtils().isWeb
-                                ? null
-                                : DefaultSpecialTextSpanBuilder(
-                                    isUseTencentCloudChatPackage:
-                                        widget.model.chatConfig.stickerPanelConfig?.useTencentCloudChatStickerPackage ??
-                                            true,
-                                    customEmojiStickerList: widget.customEmojiStickerList,
-                                    showAtBackground: true,
-                                  )),
-                      ),
+                            fillColor:
+                                widget.backgroundColor ?? theme.desktopChatMessageInputBgColor ?? hexToColor("fafafa"),
+                            filled: true,
+                            isDense: true,
+                            hintText: widget.hintText ?? '',
+                          ),
+                          controller: widget.textEditingController,
+                          specialTextSpanBuilder: PlatformUtils().isWeb
+                              ? null
+                              : DefaultSpecialTextSpanBuilder(
+                                  isUseTencentCloudChatPackage:
+                                      widget.model.chatConfig.stickerPanelConfig?.useTencentCloudChatStickerPackage ??
+                                          true,
+                                  customEmojiStickerList: widget.customEmojiStickerList,
+                                  showAtBackground: true,
+                                )),
+                    ),
                   ],
                 ),
               ),

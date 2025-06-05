@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/common_utils.dart';
-
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/separate_models/tui_chat_separate_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitMessageItem/TIMUIKitMessageReaction/tim_uikit_message_reaction_show_panel.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_cloud_custom_data.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
 
 class TIMUIKitMessageReactionWrapper extends StatefulWidget {
   final Widget child;
@@ -28,7 +28,7 @@ class TIMUIKitMessageReactionWrapper extends StatefulWidget {
       this.clearJump,
       required this.isFromSelf,
       this.backgroundColor,
-        required this.chatModel,
+      required this.chatModel,
       required this.message,
       this.borderRadius,
       required this.child,
@@ -39,15 +39,13 @@ class TIMUIKitMessageReactionWrapper extends StatefulWidget {
   State<StatefulWidget> createState() => _TIMUIKitMessageReactionWrapperState();
 }
 
-class _TIMUIKitMessageReactionWrapperState
-    extends TIMUIKitState<TIMUIKitMessageReactionWrapper> {
+class _TIMUIKitMessageReactionWrapperState extends TIMUIKitState<TIMUIKitMessageReactionWrapper> {
   bool isShowJumpState = false;
   bool isShining = false;
   bool isShowBorder = false;
 
   _showJumpColor() {
-    if ((widget.chatModel.jumpMsgID != widget.message.msgID) &&
-        (widget.message.msgID?.isNotEmpty ?? true)) {
+    if ((widget.chatModel.jumpMsgID != widget.message.msgID) && (widget.message.msgID?.isNotEmpty ?? true)) {
       return;
     }
     isShining = true;
@@ -86,8 +84,7 @@ class _TIMUIKitMessageReactionWrapperState
       messageCloudCustomData = CloudCustomData();
     }
 
-    if (messageCloudCustomData.messageReaction != null &&
-        messageCloudCustomData.messageReaction!.isNotEmpty) {
+    if (messageCloudCustomData.messageReaction != null && messageCloudCustomData.messageReaction!.isNotEmpty) {
       messageReaction = messageCloudCustomData.messageReaction!;
     } else {
       return false;
@@ -99,8 +96,7 @@ class _TIMUIKitMessageReactionWrapperState
       messageReactionStickerList.add(int.parse(key));
     });
 
-    final filteredMessageReactionStickerList =
-        messageReactionStickerList.where((sticker) {
+    final filteredMessageReactionStickerList = messageReactionStickerList.where((sticker) {
       if (messageReaction[sticker.toString()] == null ||
           messageReaction[sticker.toString()] is! List ||
           messageReaction[sticker.toString()].length == 0) {
@@ -136,29 +132,23 @@ class _TIMUIKitMessageReactionWrapperState
           _showJumpColor();
         });
       } else {
-        if ((widget.chatModel.jumpMsgID == widget.message.msgID) &&
-            (widget.message.msgID?.isNotEmpty ?? false)) {
-          if(widget.clearJump != null){
+        if ((widget.chatModel.jumpMsgID == widget.message.msgID) && (widget.message.msgID?.isNotEmpty ?? false)) {
+          if (widget.clearJump != null) {
             widget.clearJump!();
           }
         }
       }
     }
 
-    final defaultStyle = widget.isFromSelf
-        ? theme.lightPrimaryMaterialColor.shade50
-        : theme.weakBackgroundColor;
-    final backgroundColor = isShowJumpState
-        ? const Color.fromRGBO(245, 166, 35, 1)
-        : (widget.backgroundColor ?? defaultStyle);
+    final defaultStyle = widget.isFromSelf ? theme.lightPrimaryMaterialColor.shade50 : theme.weakBackgroundColor;
+    final backgroundColor =
+        isShowJumpState ? const Color.fromRGBO(245, 166, 35, 1) : (widget.backgroundColor ?? defaultStyle);
 
     if (!widget.isShowMessageReaction || !isHaveMessageReaction()) {
       return Container(
         decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(5)),
-            border: Border.all(
-                color: Color.fromRGBO(245, 166, 35, (isShowBorder ? 1 : 0)),
-                width: 2)),
+            border: Border.all(color: Color.fromRGBO(245, 166, 35, (isShowBorder ? 1 : 0)), width: 2)),
         child: widget.child,
       );
     }
@@ -169,21 +159,17 @@ class _TIMUIKitMessageReactionWrapperState
         color: backgroundColor,
         borderRadius: widget.borderRadius ?? borderRadius,
       ),
-      constraints:
-          BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
-                border: Border.all(
-                    color: Color.fromRGBO(245, 166, 35, (isShowBorder ? 1 : 0)),
-                    width: 2)),
+                border: Border.all(color: Color.fromRGBO(245, 166, 35, (isShowBorder ? 1 : 0)), width: 2)),
             child: widget.child,
           ),
-          if (widget.isShowMessageReaction)
-            TIMUIKitMessageReactionShowPanel(message: widget.message)
+          if (widget.isShowMessageReaction) TIMUIKitMessageReactionShowPanel(message: widget.message)
         ],
       ),
     );

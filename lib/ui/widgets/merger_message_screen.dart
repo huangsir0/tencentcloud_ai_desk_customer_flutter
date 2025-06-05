@@ -19,7 +19,8 @@ import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_cl
 import 'package:tencentcloud_ai_desk_customer/ui/widgets/avatar.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencent_cloud_chat_sdk/enum/message_elem_type.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme_view_model.dart';
 
@@ -28,11 +29,7 @@ class MergerMessageScreen extends StatefulWidget {
   final String msgID;
   final MessageItemBuilder? messageItemBuilder;
 
-  const MergerMessageScreen(
-      {Key? key,
-      required this.model,
-      required this.msgID,
-      this.messageItemBuilder})
+  const MergerMessageScreen({Key? key, required this.model, required this.msgID, this.messageItemBuilder})
       : super(key: key);
 
   @override
@@ -51,22 +48,18 @@ class MergerMessageScreenState extends TIMUIKitState<MergerMessageScreen> {
   }
 
   void initMessageList() async {
-    final mergerMessageList =
-        await _messageService.downloadMergerMessage(msgID: widget.msgID);
+    final mergerMessageList = await _messageService.downloadMergerMessage(msgID: widget.msgID);
     setState(() {
       messageList = mergerMessageList ?? [];
     });
   }
 
   bool isReplyMessage(V2TimMessage message) {
-    final hasCustomData =
-        message.cloudCustomData != null && message.cloudCustomData != "";
+    final hasCustomData = message.cloudCustomData != null && message.cloudCustomData != "";
     if (hasCustomData) {
       try {
-        final CloudCustomData messageCloudCustomData = CloudCustomData.fromJson(json.decode(
-            TencentDeskUtils.checkString(message.cloudCustomData) != null
-                ? message.cloudCustomData!
-                : "{}"));
+        final CloudCustomData messageCloudCustomData = CloudCustomData.fromJson(
+            json.decode(TencentDeskUtils.checkString(message.cloudCustomData) != null ? message.cloudCustomData! : "{}"));
         if (messageCloudCustomData.messageReply != null) {
           MessageRepliedData.fromJson(messageCloudCustomData.messageReply!);
           return true;
@@ -193,10 +186,7 @@ class MergerMessageScreenState extends TIMUIKitState<MergerMessageScreen> {
             () {},
           )!;
         }
-        return TIMUIKitVideoElem(message,
-            chatModel: widget.model,
-            isFrom: "merger",
-            isShowMessageReaction: false);
+        return TIMUIKitVideoElem(message, chatModel: widget.model, isFrom: "merger", isShowMessageReaction: false);
       case MessageElemType.V2TIM_ELEM_TYPE_LOCATION:
         if (widget.messageItemBuilder?.locationMessageItemBuilder != null) {
           return widget.messageItemBuilder!.locationMessageItemBuilder!(
@@ -244,19 +234,20 @@ class MergerMessageScreenState extends TIMUIKitState<MergerMessageScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: isSelf ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          if(!isSelf) SizedBox(
-            width: 40,
-            height: 40,
-            child: Avatar(faceUrl: faceUrl, showName: showName),
-          ),
-          if(!isSelf) const SizedBox(
-            width: 12,
-          ),
+          if (!isSelf)
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: Avatar(faceUrl: faceUrl, showName: showName),
+            ),
+          if (!isSelf)
+            const SizedBox(
+              width: 12,
+            ),
           Column(
             crossAxisAlignment: isSelf ? CrossAxisAlignment.end : CrossAxisAlignment.start,
             children: [
-              Text(showName,
-                  style: TextStyle(fontSize: 12, color: theme.weakTextColor)),
+              Text(showName, style: TextStyle(fontSize: 12, color: theme.weakTextColor)),
               const SizedBox(
                 height: 4,
               ),
@@ -266,14 +257,16 @@ class MergerMessageScreenState extends TIMUIKitState<MergerMessageScreen> {
               )
             ],
           ),
-          if(isSelf) const SizedBox(
-            width: 12,
-          ),
-          if(isSelf) SizedBox(
-            width: 40,
-            height: 40,
-            child: Avatar(faceUrl: faceUrl, showName: showName),
-          ),
+          if (isSelf)
+            const SizedBox(
+              width: 12,
+            ),
+          if (isSelf)
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: Avatar(faceUrl: faceUrl, showName: showName),
+            ),
         ],
       ),
     );
@@ -283,8 +276,7 @@ class MergerMessageScreenState extends TIMUIKitState<MergerMessageScreen> {
   Widget tuiBuild(BuildContext context, TUIKitBuildValue value) {
     final TUITheme theme = value.theme;
 
-    final isDesktopScreen =
-        TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
 
     Widget messageListPage() {
       return messageList.isEmpty
@@ -332,8 +324,7 @@ class MergerMessageScreenState extends TIMUIKitState<MergerMessageScreen> {
                 style: TextStyle(color: theme.appbarTextColor, fontSize: 17),
               ),
               shadowColor: theme.weakDividerColor,
-              backgroundColor: theme.appbarBgColor ??
-                  theme.primaryColor,
+              backgroundColor: theme.appbarBgColor ?? theme.primaryColor,
               iconTheme: IconThemeData(
                 color: theme.appbarTextColor,
               )),

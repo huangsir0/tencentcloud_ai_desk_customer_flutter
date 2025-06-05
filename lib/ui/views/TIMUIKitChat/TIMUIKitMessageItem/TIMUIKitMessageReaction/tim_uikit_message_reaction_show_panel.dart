@@ -1,39 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_desk_i18n_tool/tencent_desk_i18n_tool.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_statelesswidget.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/separate_models/tui_chat_separate_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_chat_global_model.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_self_info_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
-import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/platform.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitMessageItem/TIMUIKitMessageReaction/tim_uikit_message_reaction_detail.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitMessageItem/TIMUIKitMessageReaction/tim_uikit_message_reaction_show_item.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitMessageItem/TIMUIKitMessageReaction/tim_uikit_message_reaction_utils.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_cloud_custom_data.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
 
 class TIMUIKitMessageReactionShowPanel extends TIMUIKitStatelessWidget {
   /// current message
   final V2TimMessage message;
 
-  TIMUIKitMessageReactionShowPanel({required this.message, Key? key})
-      : super(key: key);
+  TIMUIKitMessageReactionShowPanel({required this.message, Key? key}) : super(key: key);
 
   final TCustomerSelfInfoViewModel selfInfoModel =
       serviceLocator<TCustomerSelfInfoViewModel>();
 
-  void showMore(
-      BuildContext context,
-      List<V2TimGroupMemberFullInfo?>? memberList,
-      Map<String, dynamic> messageReaction,
-      int currentSticker,
-      List<int> stickerList,
-      TUIChatSeparateViewModel model) async {
-    _showCustomModalBottomSheet(context, memberList, messageReaction,
-        currentSticker, stickerList, model);
+  void showMore(BuildContext context, List<V2TimGroupMemberFullInfo?>? memberList, Map<String, dynamic> messageReaction,
+      int currentSticker, List<int> stickerList, TUIChatSeparateViewModel model) async {
+    _showCustomModalBottomSheet(context, memberList, messageReaction, currentSticker, stickerList, model);
   }
 
   Future<Future<int?>> _showCustomModalBottomSheet(
@@ -70,8 +65,7 @@ class TIMUIKitMessageReactionShowPanel extends TIMUIKitStatelessWidget {
                   Center(
                     child: Text(
                       TDesk_t("回应详情"),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16.0),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
                   ),
                   IconButton(
@@ -87,8 +81,7 @@ class TIMUIKitMessageReactionShowPanel extends TIMUIKitStatelessWidget {
                 child: TIMUIKitMessageReactionDetail(
               onTapAvatar: model.onTapAvatar,
               stickerList: stickerList,
-              currentStickerIndex: stickerList
-                  .indexWhere((element) => element == currentSticker),
+              currentStickerIndex: stickerList.indexWhere((element) => element == currentSticker),
               memberList: memberList,
               messageReaction: messageReaction,
             )),
@@ -101,12 +94,9 @@ class TIMUIKitMessageReactionShowPanel extends TIMUIKitStatelessWidget {
   @override
   Widget tuiBuild(BuildContext context, TUIKitBuildValue value) {
     Map<String, dynamic> messageReaction = {};
-    CloudCustomData messageCloudCustomData =
-        MessageReactionUtils.getCloudCustomData(message);
-    final TUIChatSeparateViewModel model =
-        Provider.of<TUIChatSeparateViewModel>(context);
-    if (messageCloudCustomData.messageReaction != null &&
-        messageCloudCustomData.messageReaction!.isNotEmpty) {
+    CloudCustomData messageCloudCustomData = MessageReactionUtils.getCloudCustomData(message);
+    final TUIChatSeparateViewModel model = Provider.of<TUIChatSeparateViewModel>(context);
+    if (messageCloudCustomData.messageReaction != null && messageCloudCustomData.messageReaction!.isNotEmpty) {
       messageReaction = messageCloudCustomData.messageReaction!;
     } else {
       return const SizedBox(width: 0, height: 0);
@@ -118,8 +108,7 @@ class TIMUIKitMessageReactionShowPanel extends TIMUIKitStatelessWidget {
       messageReactionStickerList.add(int.parse(key));
     });
 
-    final filteredMessageReactionStickerList =
-        messageReactionStickerList.where((sticker) {
+    final filteredMessageReactionStickerList = messageReactionStickerList.where((sticker) {
       if (messageReaction[sticker.toString()] == null ||
           messageReaction[sticker.toString()] is! List ||
           messageReaction[sticker.toString()].length == 0) {
@@ -159,8 +148,8 @@ class TIMUIKitMessageReactionShowPanel extends TIMUIKitStatelessWidget {
                       nameList: messageReaction[sticker.toString()],
                       sticker: sticker,
                       onShowDetail: (int sticker) {
-                        showMore(context, memberList, messageReaction, sticker,
-                            filteredMessageReactionStickerList, model);
+                        showMore(
+                            context, memberList, messageReaction, sticker, filteredMessageReactionStickerList, model);
                       });
                 }).toList(),
               ],

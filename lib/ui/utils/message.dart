@@ -11,14 +11,22 @@ import 'package:tencentcloud_ai_desk_customer/ui/utils/logger.dart';
 import 'package:tencent_cloud_chat_sdk/enum/group_change_info_type.dart';
 import 'package:tencent_cloud_chat_sdk/enum/group_tips_elem_type.dart';
 import 'package:tencent_cloud_chat_sdk/enum/message_elem_type.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_change_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_tips_elem.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_image.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_change_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_change_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_tips_elem.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_tips_elem.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_image.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_image.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_user_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_value_callback.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 
@@ -41,8 +49,7 @@ class MessageUtils {
   // 是否是群组TRTC信息
   static isGroupCallingMessage(V2TimMessage message) {
     final isGroup = message.groupID != null;
-    final isCustomMessage =
-        message.elemType == MessageElemType.V2TIM_ELEM_TYPE_CUSTOM;
+    final isCustomMessage = message.elemType == MessageElemType.V2TIM_ELEM_TYPE_CUSTOM;
     if (isCustomMessage) {
       final customElemData = message.customElem?.data ?? "";
       return isCallingData(customElemData) && isGroup;
@@ -70,8 +77,8 @@ class MessageUtils {
     }
   }
 
-  static Future<String> _getGroupChangeType(V2TimGroupChangeInfo info,
-      List<V2TimGroupMemberFullInfo?> groupMemberList) async {
+  static Future<String> _getGroupChangeType(
+      V2TimGroupChangeInfo info, List<V2TimGroupMemberFullInfo?> groupMemberList) async {
     int? type = info.type;
     var value = info.value;
     String s = TDesk_t('群资料信息');
@@ -101,8 +108,7 @@ class MessageUtils {
               TencentDeskUtils.checkString(groupMemberInfo.nickName) ??
               TencentDeskUtils.checkString(groupMemberInfo.userID);
         } else {
-          final res = await TencentImSDKPlugin.v2TIMManager
-              .getUsersInfo(userIDList: [value ?? ""]);
+          final res = await TencentImSDKPlugin.v2TIMManager.getUsersInfo(userIDList: [value ?? ""]);
           if (res.code == 0) {
             final List<V2TimUserFullInfo> data = res.data ?? [];
             if (data.isNotEmpty) {
@@ -134,7 +140,7 @@ class MessageUtils {
   }
 
   static String? _getOpUserNick(V2TimGroupMemberInfo? opUser) {
-    if(opUser == null){
+    if (opUser == null) {
       return "";
     }
     return TencentDeskUtils.checkString(opUser.friendRemark) ??
@@ -160,8 +166,7 @@ class MessageUtils {
   }
 
   static Future<String> groupTipsMessageAbstract(
-      V2TimGroupTipsElem groupTipsElem,
-      List<V2TimGroupMemberFullInfo?> groupMemberList) async {
+      V2TimGroupTipsElem groupTipsElem, List<V2TimGroupMemberFullInfo?> groupMemberList) async {
     String displayMessage;
     final operationType = groupTipsElem.type;
     final operationMember = groupTipsElem.opMember;
@@ -199,15 +204,13 @@ class MessageUtils {
             TDesk_t_para("{{option6}}退出群聊", "$option6退出群聊")(option6: option6);
         break;
       case GroupTipsElemType.V2TIM_GROUP_TIPS_TYPE_INVITE:
-        final option5 =
-        memberList!.map((e) => _getMemberNickName(e!).toString()).join("、");
+        final option5 = memberList!.map((e) => _getMemberNickName(e!).toString()).join("、");
         final inviteUser = _getOpUserNick(operationMember);
         displayMessage = '$inviteUser' +
             TDesk_t_para("邀请{{option5}}加入群组", "邀请$option5加入群组")(option5: option5);
         break;
       case GroupTipsElemType.V2TIM_GROUP_TIPS_TYPE_KICKED:
-        final option4 =
-        memberList!.map((e) => _getMemberNickName(e!).toString()).join("、");
+        final option4 = memberList!.map((e) => _getMemberNickName(e!).toString()).join("、");
         final kickUser = _getOpUserNick(operationMember);
         displayMessage = '$kickUser' +
             TDesk_t_para("将{{option4}}踢出群组", "将$option4踢出群组")(option4: option4);
@@ -220,8 +223,8 @@ class MessageUtils {
         break;
       case GroupTipsElemType.V2TIM_GROUP_TIPS_TYPE_MEMBER_INFO_CHANGE:
         displayMessage = groupTipsElem.memberList!.map((e) {
-          final changedMember = groupTipsElem.memberChangeInfoList!
-              .firstWhere((element) => element!.userID == e!.userID);
+          final changedMember =
+              groupTipsElem.memberChangeInfoList!.firstWhere((element) => element!.userID == e!.userID);
           final isMute = changedMember!.muteTime != 0;
           final option2 = _getMemberNickName(e!);
           final displayMessage = isMute ? TDesk_t("禁言") : TDesk_t("解除禁言");
@@ -230,8 +233,7 @@ class MessageUtils {
         }).join("、");
         break;
       case GroupTipsElemType.V2TIM_GROUP_TIPS_TYPE_SET_ADMIN:
-        final adminMember =
-        memberList!.map((e) => _getMemberNickName(e!).toString()).join("、");
+        final adminMember = memberList!.map((e) => _getMemberNickName(e!).toString()).join("、");
         final opMember = _getOpUserNick(operationMember);
         final option1 = adminMember;
         displayMessage = '$opMember' +
@@ -239,8 +241,7 @@ class MessageUtils {
                 option1: option1);
         break;
       case GroupTipsElemType.V2TIM_GROUP_TIPS_TYPE_CANCEL_ADMIN:
-        final adminMember =
-        memberList!.map((e) => _getMemberNickName(e!).toString()).join("、");
+        final adminMember = memberList!.map((e) => _getMemberNickName(e!).toString()).join("、");
         final opMember = _getOpUserNick(operationMember);
         final option1 = adminMember;
         displayMessage = '$opMember' +
@@ -286,12 +287,10 @@ class MessageUtils {
   }
 
   static Widget wrapMessageTips(Widget child, TUITheme? theme) {
-    return Container(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 30), child: child);
+    return Container(margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 30), child: child);
   }
 
-  static String getAbstractMessageAsync(V2TimMessage message,
-      List<V2TimGroupMemberFullInfo?> groupMemberList) {
+  static String getAbstractMessageAsync(V2TimMessage message, List<V2TimGroupMemberFullInfo?> groupMemberList) {
     final msgType = message.elemType;
     switch (msgType) {
       case MessageElemType.V2TIM_ELEM_TYPE_CUSTOM:
@@ -321,15 +320,12 @@ class MessageUtils {
     }
   }
 
-  static V2TimImage? getImageFromImgList(
-      List<V2TimImage?>? list, List<String> order) {
+  static V2TimImage? getImageFromImgList(List<V2TimImage?>? list, List<String> order) {
     V2TimImage? img;
     try {
       for (String type in order) {
-        img = list?.firstWhere(
-                (e) =>
-            e?.type == HistoryMessageDartConstant.V2_TIM_IMAGE_TYPES[type],
-            orElse: () => null);
+        img =
+            list?.firstWhere((e) => e?.type == HistoryMessageDartConstant.V2_TIM_IMAGE_TYPES[type], orElse: () => null);
       }
     } catch (e) {
       outputLogger.i('getImageFromImgList error ${e.toString()}');
@@ -345,16 +341,15 @@ class MessageUtils {
     final displayName = friendRemark.isNotEmpty
         ? friendRemark
         : nameCard.isNotEmpty
-        ? nameCard
-        : nickName.isNotEmpty
-        ? nickName
-        : sender;
+            ? nameCard
+            : nickName.isNotEmpty
+                ? nickName
+                : sender;
     return displayName.toString();
   }
 
   static Future<V2TimValueCallback<V2TimMessage>?> handleMessageError(
-      Future<V2TimValueCallback<V2TimMessage>?> fun,
-      BuildContext context) async {
+      Future<V2TimValueCallback<V2TimMessage>?> fun, BuildContext context) async {
     final res = await fun;
     return handleMessageErrorCode(res, context);
   }

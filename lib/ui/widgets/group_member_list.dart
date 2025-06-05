@@ -15,7 +15,8 @@ import 'package:tencentcloud_ai_desk_customer/ui/widgets/radio_button.dart';
 import 'package:tencent_desk_i18n_tool/tencent_desk_i18n_tool.dart';
 
 import 'package:tencent_cloud_chat_sdk/enum/group_member_role.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_full_info.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/color.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme_view_model.dart';
@@ -81,7 +82,8 @@ class _GroupProfileMemberListState extends TIMUIKitState<GroupProfileMemberList>
     for (var i = 0; i < memberList.length; i++) {
       final item = memberList[i];
       final showName = _getShowName(item);
-      if (item?.role == GroupMemberRoleType.V2TIM_GROUP_MEMBER_ROLE_OWNER || item?.role == GroupMemberRoleType.V2TIM_GROUP_MEMBER_ROLE_ADMIN) {
+      if (item?.role == GroupMemberRoleType.V2TIM_GROUP_MEMBER_ROLE_OWNER ||
+          item?.role == GroupMemberRoleType.V2TIM_GROUP_MEMBER_ROLE_ADMIN) {
         showList.add(ISuspensionBeanImpl(memberInfo: item, tagIndex: "@"));
       } else {
         String pinyin = PinyinHelper.getPinyinE(showName);
@@ -100,7 +102,12 @@ class _GroupProfileMemberListState extends TIMUIKitState<GroupProfileMemberList>
     if (widget.canAtAll) {
       final canAtGroupType = ["Work", "Public", "Meeting"];
       if (canAtGroupType.contains(widget.groupType)) {
-        showList.insert(0, ISuspensionBeanImpl(memberInfo: V2TimGroupMemberFullInfo(userID: GroupProfileMemberList.AT_ALL_USER_ID, nickName: TDesk_t("所有人")), tagIndex: ""));
+        showList.insert(
+            0,
+            ISuspensionBeanImpl(
+                memberInfo:
+                    V2TimGroupMemberFullInfo(userID: GroupProfileMemberList.AT_ALL_USER_ID, nickName: TDesk_t("所有人")),
+                tagIndex: ""));
       }
     }
 
@@ -153,8 +160,10 @@ class _GroupProfileMemberListState extends TIMUIKitState<GroupProfileMemberList>
                               }
                               setState(() {});
                             },
-                            isChecked: selectedMemberList.where((element) => element.userID == memberInfo.userID).toList().isNotEmpty
-                        ),
+                            isChecked: selectedMemberList
+                                .where((element) => element.userID == memberInfo.userID)
+                                .toList()
+                                .isNotEmpty),
                       ),
                     Container(
                       width: isDesktopScreen ? 30 : 36,

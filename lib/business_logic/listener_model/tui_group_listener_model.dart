@@ -10,8 +10,10 @@ import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart
 import 'package:tencent_cloud_chat_sdk/enum/V2TimGroupListener.dart';
 import 'package:tencent_cloud_chat_sdk/enum/group_change_info_type.dart';
 import 'package:tencent_cloud_chat_sdk/manager/v2_tim_manager.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_change_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_change_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_change_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_info.dart';
 
 enum UpdateType { groupInfo, memberList, joinApplicationList, groupDismissed, kickedFromGroup }
 
@@ -41,46 +43,39 @@ class TCustomerGroupListenerModel extends ChangeNotifier {
     });
   }
 
-  TCustomerGroupListenerModel() {
-    _groupListener = V2TimGroupListener(
-      onMemberInvited: (groupID, opUser, memberList) {
-        _needUpdate = NeedUpdate(groupID, UpdateType.memberList, "");
-        notifyListeners();
-      },
-      onMemberKicked: (groupID, opUser, memberList) async {
-        if (_isLoginUserKickedFromGroup(groupID, memberList)) {
-          _deleteGroupConversation(groupID);
-
-          final groupName = await _getGroupName(groupID);
-          _needUpdate = NeedUpdate(groupID, UpdateType.kickedFromGroup, groupName);
-          notifyListeners();
-        }
-      },
-      onMemberEnter: (String groupID, List<V2TimGroupMemberInfo> memberList) {
-        _needUpdate = NeedUpdate(groupID, UpdateType.memberList, "");
-        notifyListeners();
-      },
-      onMemberLeave: (String groupID, V2TimGroupMemberInfo member) {
-        _needUpdate = NeedUpdate(groupID, UpdateType.memberList, "");
-        notifyListeners();
-      },
-      onGroupInfoChanged: (groupID, changeInfos) {
-        _needUpdate = NeedUpdate(groupID, UpdateType.groupInfo, "");
-        for (V2TimGroupChangeInfo info in changeInfos) {
-          if (info.type == GroupChangeInfoType.V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER) {
-            _needUpdate!.groupInfoSubType = GroupChangeInfoType.V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER;
-            _needUpdate!.ownerID = info.value;
-          }
-        }
-        notifyListeners();
-      },
-      onGroupDismissed: (String groupID, V2TimGroupMemberInfo opUser) async {
+  TUIGroupListenerModel() {
+    _groupListener = V2TimGroupListener(onMemberInvited: (groupID, opUser, memberList) {
+      _needUpdate = NeedUpdate(groupID, UpdateType.memberList, "");
+      notifyListeners();
+    }, onMemberKicked: (groupID, opUser, memberList) async {
+      if (_isLoginUserKickedFromGroup(groupID, memberList)) {
         _deleteGroupConversation(groupID);
+
         final groupName = await _getGroupName(groupID);
-        _needUpdate = NeedUpdate(groupID, UpdateType.groupDismissed, groupName);
+        _needUpdate = NeedUpdate(groupID, UpdateType.kickedFromGroup, groupName);
         notifyListeners();
       }
-    );
+    }, onMemberEnter: (String groupID, List<V2TimGroupMemberInfo> memberList) {
+      _needUpdate = NeedUpdate(groupID, UpdateType.memberList, "");
+      notifyListeners();
+    }, onMemberLeave: (String groupID, V2TimGroupMemberInfo member) {
+      _needUpdate = NeedUpdate(groupID, UpdateType.memberList, "");
+      notifyListeners();
+    }, onGroupInfoChanged: (groupID, changeInfos) {
+      _needUpdate = NeedUpdate(groupID, UpdateType.groupInfo, "");
+      for (V2TimGroupChangeInfo info in changeInfos) {
+        if (info.type == GroupChangeInfoType.V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER) {
+          _needUpdate!.groupInfoSubType = GroupChangeInfoType.V2TIM_GROUP_INFO_CHANGE_TYPE_OWNER;
+          _needUpdate!.ownerID = info.value;
+        }
+      }
+      notifyListeners();
+    }, onGroupDismissed: (String groupID, V2TimGroupMemberInfo opUser) async {
+      _deleteGroupConversation(groupID);
+      final groupName = await _getGroupName(groupID);
+      _needUpdate = NeedUpdate(groupID, UpdateType.groupDismissed, groupName);
+      notifyListeners();
+    });
   }
 
   setGroupListener() {
@@ -113,6 +108,3 @@ class TCustomerGroupListenerModel extends ChangeNotifier {
     return false;
   }
 }
-
-
-

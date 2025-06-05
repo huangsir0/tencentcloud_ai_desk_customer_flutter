@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
-import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_class.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_conversation.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_friend_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_value_callback.dart';
 import 'package:tencent_desk_i18n_tool/tencent_desk_i18n_tool.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
+import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_class.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_callback.dart';
 
 typedef MessageFunction = Future<V2TimMessage?> Function(V2TimMessage message);
@@ -63,7 +67,8 @@ abstract class DefaultLifeCycle {
 
   static defaultNullCallbackSolution(dynamic) {}
 
-  static Future<bool> defaultAddFriend(String userID, String? remark, String? friendGroup, String? addWording, [BuildContext? context]) async {
+  static Future<bool> defaultAddFriend(String userID, String? remark, String? friendGroup, String? addWording,
+      [BuildContext? context]) async {
     return true;
   }
 

@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/color.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/screen_utils.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';

@@ -6,6 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_conversation.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_application.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_application.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_at_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_at_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
+import 'package:tencent_cloud_uikit_core/tencent_cloud_uikit_core.dart';
+import 'package:tencent_desk_i18n_tool/tencent_desk_i18n_tool.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/life_cycle/chat_life_cycle.dart';
@@ -15,15 +28,17 @@ import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_cha
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_conversation_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_self_info_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
-import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
+import 'package:tencentcloud_ai_desk_customer/theme/color.dart';
+import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
+import 'package:tencentcloud_ai_desk_customer/theme/tui_theme_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/constants/history_message_constant.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/controller/tim_uikit_chat_controller.dart';
+import 'package:tencentcloud_ai_desk_customer/ui/utils/common_utils.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/frame.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/logger.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/platform.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKItMessageList/TIMUIKitTongue/tim_uikit_chat_history_message_list_tongue.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKItMessageList/tim_uikit_chat_history_message_list_config.dart';
-import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKItMessageList/tim_uikit_chat_history_message_list_item.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKItMessageList/tim_uikit_history_message_list_container.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitAppBar/tim_uikit_appbar.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitTextField/at_member_panel.dart';
@@ -33,16 +48,9 @@ import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitText
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_chat_config.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_multi_select_panel.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_send_file.dart';
+import 'package:tim_ui_kit_sticker_plugin/utils/tim_custom_face_data.dart';
 
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_application.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_at_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
-import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
-import 'package:tencentcloud_ai_desk_customer/theme/color.dart';
-import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
-import 'package:tencentcloud_ai_desk_customer/theme/tui_theme_view_model.dart';
+import 'TIMUIKItMessageList/tim_uikit_chat_history_message_list_item.dart';
 
 class TencentCloudCustomerMessage extends StatefulWidget {
   int startTime = 0;
@@ -80,7 +88,8 @@ class TencentCloudCustomerMessage extends StatefulWidget {
   /// Avatar and name in message reaction secondary tap callback.
   final void Function(String userID, TapDownDetails tapDetails)? onSecondaryTapAvatar;
 
-  @Deprecated("Nickname will not shows in one-to-one chat, if you tend to control it in group chat, please use `isShowSelfNameInGroup` and `isShowOthersNameInGroup` from `config: TIMUIKitChatConfig` instead")
+  @Deprecated(
+      "Nickname will not shows in one-to-one chat, if you tend to control it in group chat, please use `isShowSelfNameInGroup` and `isShowOthersNameInGroup` from `config: TIMUIKitChatConfig` instead")
 
   /// Should show the nick name.
   final bool showNickName;
@@ -92,10 +101,12 @@ class TencentCloudCustomerMessage extends StatefulWidget {
   final bool showTotalUnReadCount;
 
   /// Deprecated("Please use [extraTipsActionItemBuilder] instead")
-  final Widget? Function(V2TimMessage message, Function() closeTooltip, [Key? key, BuildContext? context])? exteraTipsActionItemBuilder;
+  final Widget? Function(V2TimMessage message, Function() closeTooltip, [Key? key, BuildContext? context])?
+      exteraTipsActionItemBuilder;
 
   /// The builder for extra tips action.
-  final Widget? Function(V2TimMessage message, Function() closeTooltip, [Key? key, BuildContext? context])? extraTipsActionItemBuilder;
+  final Widget? Function(V2TimMessage message, Function() closeTooltip, [Key? key, BuildContext? context])?
+      extraTipsActionItemBuilder;
 
   /// The text of draft shows in TextField.
   /// [Recommend]: You can specify this field with the draftText from V2TimConversation.
@@ -186,7 +197,9 @@ class TencentCloudCustomerMessage extends StatefulWidget {
       this.conversationShowName,
       this.abstractMessageBuilder,
       this.onTapAvatar,
-      @Deprecated("Nickname will not show in one-to-one chat, if you tend to control it in group chat, please use `isShowSelfNameInGroup` and `isShowOthersNameInGroup` from `config: TIMUIKitChatConfig` instead") this.showNickName = false,
+      @Deprecated(
+          "Nickname will not show in one-to-one chat, if you tend to control it in group chat, please use `isShowSelfNameInGroup` and `isShowOthersNameInGroup` from `config: TIMUIKitChatConfig` instead")
+      this.showNickName = false,
       this.showTotalUnReadCount = false,
       this.messageItemBuilder,
       @Deprecated("Please use [extraTipsActionItemBuilder] instead") this.exteraTipsActionItemBuilder,
@@ -307,7 +320,9 @@ class _TUIChatState extends TIMUIKitState<TencentCloudCustomerMessage> {
   updateDraft() async {
     final isTopic = widget.conversation.conversationID.contains("@TOPIC#");
     if (isTopic) {
-      final topicInfoList = await TencentImSDKPlugin.v2TIMManager.getGroupManager().getTopicInfoList(groupID: widget.groupID!, topicIDList: [widget.conversation.conversationID]);
+      final topicInfoList = await TencentImSDKPlugin.v2TIMManager
+          .getGroupManager()
+          .getTopicInfoList(groupID: widget.groupID!, topicIDList: [widget.conversation.conversationID]);
       final topicInfo = topicInfoList.data?.first.topicInfo;
       final draftText = topicInfo?.draftText;
       if (TencentDeskUtils.checkString(draftText) != null) {
@@ -355,7 +370,9 @@ class _TUIChatState extends TIMUIKitState<TencentCloudCustomerMessage> {
   }
 
   String _getConvID() {
-    return TencentDeskUtils.checkString(widget.conversationID) ?? (widget.conversation.type == 1 ? widget.conversation.userID : widget.conversation.groupID) ?? "";
+    return TencentDeskUtils.checkString(widget.conversationID) ??
+        (widget.conversation.type == 1 ? widget.conversation.userID : widget.conversation.groupID) ??
+        "";
   }
 
   ConvType _getConvType() {
@@ -367,8 +384,7 @@ class _TUIChatState extends TIMUIKitState<TencentCloudCustomerMessage> {
       return;
     }
     final w = await TUICore.instance.raiseExtension(TUIExtensionID.joinInGroup, {GROUP_ID: widget.conversationID!});
-    if(w != _joinInGroupCallWidget){
-
+    if (w != _joinInGroupCallWidget) {
       setState(() {
         _joinInGroupCallWidget = w;
       });
@@ -430,9 +446,16 @@ class _TUIChatState extends TIMUIKitState<TencentCloudCustomerMessage> {
           }
 
           List<CustomEmojiFaceData> customImageSmallPngEmojiPackages = [];
-          if (widget.config?.stickerPanelConfig?.customStickerPackages != null && widget.config!.stickerPanelConfig!.customStickerPackages.isNotEmpty) {
-            customImageSmallPngEmojiPackages = widget.config!.stickerPanelConfig!.customStickerPackages.where((element) => element.isEmoji == true).map((e) {
-              return CustomEmojiFaceData(name: e.name, isEmoji: true, icon: e.menuItem.url ?? "", list: e.stickerList.map((e) => e.url ?? "").toList());
+          if (widget.config?.stickerPanelConfig?.customStickerPackages != null &&
+              widget.config!.stickerPanelConfig!.customStickerPackages.isNotEmpty) {
+            customImageSmallPngEmojiPackages = widget.config!.stickerPanelConfig!.customStickerPackages
+                .where((element) => element.isEmoji == true)
+                .map((e) {
+              return CustomEmojiFaceData(
+                  name: e.name,
+                  isEmoji: true,
+                  icon: e.menuItem.url ?? "",
+                  list: e.stickerList.map((e) => e.url ?? "").toList());
             }).toList();
           }
           if (customImageSmallPngEmojiPackages.isEmpty) {
@@ -458,7 +481,13 @@ class _TUIChatState extends TIMUIKitState<TencentCloudCustomerMessage> {
                   onDragDone: (detail) {
                     setState(() {
                       _dragging = false;
-                      sendFileWithConfirmation(files: detail.files, conversation: widget.conversation, conversationType: _getConvType(), model: model, theme: theme, context: context);
+                      sendFileWithConfirmation(
+                          files: detail.files,
+                          conversation: widget.conversation,
+                          conversationType: _getConvType(),
+                          model: model,
+                          theme: theme,
+                          context: context);
                     });
                   },
                   onDragEntered: (detail) {
@@ -663,7 +692,8 @@ class TIMUIKitChatProviderScope extends StatelessWidget {
       preGroupMemberList: groupMemberList,
       groupID: groupID,
     );
-    model?.showC2cMessageEditStatus = (conversationType == ConvType.c2c ? config?.showC2cMessageEditStatus ?? true : false);
+    model?.showC2cMessageEditStatus =
+        (conversationType == ConvType.c2c ? config?.showC2cMessageEditStatus ?? true : false);
     loadData();
   }
 

@@ -1,9 +1,13 @@
 import 'package:tencent_cloud_chat_sdk/enum/V2TimFriendshipListener.dart';
 import 'package:tencent_cloud_chat_sdk/enum/friend_type_enum.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_check_result.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_info_result.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_check_result.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_friend_check_result.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_friend_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_info_result.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_friend_info_result.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_user_full_info.dart';
 
 abstract class TCustomerFriendshipServices {
   Future<List<V2TimFriendInfoResult>?> getFriendsInfo({

@@ -15,7 +15,7 @@ import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart
 typedef TencentCloudCustomerInit = Future<V2TimCallback> Function(
     {TencentCloudCustomerConfig? config, required int sdkAppID, required String userID, required String userSig});
 typedef TencentCloudCustomerNavigate = V2TimCallback Function(
-    {TencentCloudCustomerConfig? config, required BuildContext context, required String customerServiceID});
+    {TencentCloudCustomerConfig? config, required BuildContext context, String? customerServiceID});
 typedef TencentCloudCustomerDispose = Future<V2TimCallback> Function();
 
 class TencentCloudCustomerManagerImpl {
@@ -100,7 +100,7 @@ class TencentCloudCustomerManagerImpl {
 
   V2TimCallback navigate({
     required BuildContext context,
-    required String customerServiceID,
+    String? customerServiceID,
     TencentCloudCustomerConfig? config,
   }) {
     if (_initializedFailedRes != null) {
@@ -111,11 +111,12 @@ class TencentCloudCustomerManagerImpl {
     if(config?.language != null){
       TDeskI18nUtils(null, languageLocaleToString[config?.language]);
     }
+    final String id = customerServiceID ?? "@customer_service_account";
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => TencentCloudCustomerMessageContainer(
-          customerServiceUserID: customerServiceID,
+          customerServiceUserID: id,
           config: targetConfig,
         ),
       ),

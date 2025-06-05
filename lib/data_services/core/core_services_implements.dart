@@ -22,10 +22,14 @@ import 'package:tencentcloud_ai_desk_customer/data_services/core/web_support/uik
 
 import 'package:tencent_cloud_chat_sdk/enum/V2TimSDKListener.dart';
 import 'package:tencent_cloud_chat_sdk/enum/log_level_enum.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_callback.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_status.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_callback.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_callback.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_user_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_status.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_user_status.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_value_callback.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/color.dart';
@@ -40,8 +44,7 @@ class LoginInfo {
   final int sdkAppID;
   final V2TimUserFullInfo? loginUser;
 
-  LoginInfo(
-      {this.sdkAppID = 0, this.userSig = "", this.userID = "", this.loginUser});
+  LoginInfo({this.sdkAppID = 0, this.userSig = "", this.userID = "", this.loginUser});
 }
 
 class TCustomerCoreServicesImpl implements CoreServices {
@@ -58,11 +61,7 @@ class TCustomerCoreServicesImpl implements CoreServices {
   }
 
   LoginInfo get loginInfo {
-    return LoginInfo(
-        sdkAppID: _sdkAppID,
-        userID: _userID,
-        userSig: _userSig,
-        loginUser: _loginInfo);
+    return LoginInfo(sdkAppID: _sdkAppID, userID: _userID, userSig: _userSig, loginUser: _loginInfo);
   }
 
   EmptyAvatarBuilder? _emptyAvatarBuilder;
@@ -213,8 +212,7 @@ class TCustomerCoreServicesImpl implements CoreServices {
         onCallback!(callbackValue);
       });
     } else {
-      outputLogger.i(
-          "TUIKit Callback: ${callbackValue.type} - ${callbackValue.stackTrace}");
+      outputLogger.i("TUIKit Callback: ${callbackValue.type} - ${callbackValue.stackTrace}");
     }
   }
 
@@ -242,16 +240,12 @@ class TCustomerCoreServicesImpl implements CoreServices {
   }) async {
     _userID = userID;
     _userSig = userSig;
-    V2TimCallback result = await TencentImSDKPlugin.v2TIMManager
-        .login(userID: userID, userSig: userSig);
+    V2TimCallback result = await TencentImSDKPlugin.v2TIMManager.login(userID: userID, userSig: userSig);
     if (!PlatformUtils().isWeb) {
       didLoginSuccess();
     }
     if (result.code != 0) {
-      callOnCallback(TIMCallback(
-          type: TIMCallbackType.API_ERROR,
-          errorCode: result.code,
-          errorMsg: result.desc));
+      callOnCallback(TIMCallback(type: TIMCallbackType.API_ERROR, errorCode: result.code, errorMsg: result.desc));
     }
     return result;
   }
@@ -284,8 +278,7 @@ class TCustomerCoreServicesImpl implements CoreServices {
       if (res.code == 0 &&
           res.data != null &&
           res.data!.isNotEmpty &&
-          res.data!.firstWhereOrNull((element) => element.userID == _userID) !=
-              null) {
+          res.data!.firstWhereOrNull((element) => element.userID == _userID) != null) {
         success = true;
       } else {
         await Future.delayed(const Duration(seconds: 2));
@@ -347,9 +340,7 @@ class TCustomerCoreServicesImpl implements CoreServices {
     bool isTPNSToken = false,
     int? businessID,
   }) {
-    return TencentImSDKPlugin.v2TIMManager
-        .getOfflinePushManager()
-        .setOfflinePushConfig(
+    return TencentImSDKPlugin.v2TIMManager.getOfflinePushManager().setOfflinePushConfig(
           businessID: businessID?.toDouble() ?? 0,
           token: token,
           isTPNSToken: isTPNSToken,
@@ -360,8 +351,7 @@ class TCustomerCoreServicesImpl implements CoreServices {
   Future<V2TimCallback> setSelfInfo({
     required V2TimUserFullInfo userFullInfo,
   }) {
-    return TencentImSDKPlugin.v2TIMManager
-        .setSelfInfo(userFullInfo: userFullInfo);
+    return TencentImSDKPlugin.v2TIMManager.setSelfInfo(userFullInfo: userFullInfo);
   }
 
   @override
@@ -392,16 +382,11 @@ class TCustomerCoreServicesImpl implements CoreServices {
   }
 
   @override
-  Future<V2TimCallback> setOfflinePushStatus(
-      {required AppStatus status, int? totalCount}) {
+  Future<V2TimCallback> setOfflinePushStatus({required AppStatus status, int? totalCount}) {
     if (status == AppStatus.foreground) {
-      return TencentImSDKPlugin.v2TIMManager
-          .getOfflinePushManager()
-          .doForeground();
+      return TencentImSDKPlugin.v2TIMManager.getOfflinePushManager().doForeground();
     } else {
-      return TencentImSDKPlugin.v2TIMManager
-          .getOfflinePushManager()
-          .doBackground(unreadCount: totalCount ?? 0);
+      return TencentImSDKPlugin.v2TIMManager.getOfflinePushManager().doBackground(unreadCount: totalCount ?? 0);
     }
   }
 

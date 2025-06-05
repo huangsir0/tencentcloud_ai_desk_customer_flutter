@@ -1,8 +1,11 @@
 import 'package:tencent_cloud_chat_sdk/enum/V2TimGroupListener.dart';
 import 'package:tencent_cloud_chat_sdk/enum/group_member_filter_enum.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_info_result.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_info_result.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_info_result.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_info_result.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_info_result.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_info_result.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_value_callback.dart';
 
 abstract class TCustomerGroupServices {
   Future<List<V2TimGroupInfoResult>?> getGroupsInfo({

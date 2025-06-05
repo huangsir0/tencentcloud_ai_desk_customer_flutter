@@ -485,8 +485,7 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
         }
 
         MessageUtils.handleMessageError(
-            model.sendImageMessage(imagePath: originFile.path, convID: convID, convType: convType),
-            context);
+            model.sendImageMessage(imagePath: originFile.path, convID: convID, convType: convType), context);
       } else {
         // 监听视频准备完成事件
         _betterPlayerController.addEventsListener((event) {

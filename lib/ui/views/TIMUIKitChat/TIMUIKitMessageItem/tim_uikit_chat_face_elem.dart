@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/screen_utils.dart';
-
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/separate_models/tui_chat_separate_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitMessageItem/TIMUIKitMessageReaction/tim_uikit_message_reaction_wrapper.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
 
 class TIMUIKitFaceElem extends StatefulWidget {
   final String path;
@@ -30,7 +30,6 @@ class TIMUIKitFaceElem extends StatefulWidget {
 }
 
 class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitFaceElem> {
-
   bool isFromNetwork() {
     return widget.path.startsWith('http');
   }
@@ -51,7 +50,7 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitFaceElem> {
   Widget tuiBuild(BuildContext context, TUIKitBuildValue value) {
     final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
     return TIMUIKitMessageReactionWrapper(
-      chatModel: widget.model,
+        chatModel: widget.model,
         isShowJump: widget.isShowJump,
         isFromSelf: widget.message.isSelf ?? true,
         clearJump: widget.clearJump,
@@ -59,11 +58,8 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitFaceElem> {
         isShowMessageReaction: widget.isShowMessageReaction ?? true,
         child: Container(
           padding: const EdgeInsets.all(10),
-          constraints:
-              BoxConstraints(maxWidth: MediaQuery.of(context).size.width * (isDesktopScreen ? 0.1 : 0.3)),
-          child: isFromNetwork()
-              ? Image.network(widget.path)
-              : Image.asset(createPathFromNative(widget.path)),
+          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * (isDesktopScreen ? 0.1 : 0.3)),
+          child: isFromNetwork() ? Image.network(widget.path) : Image.asset(createPathFromNative(widget.path)),
         ));
   }
 }

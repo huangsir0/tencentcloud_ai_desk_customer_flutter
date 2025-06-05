@@ -1,16 +1,20 @@
 import 'dart:convert';
 
-import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message_change_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message_change_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_value_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_self_info_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/message/message_services.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
+import 'package:tencentcloud_ai_desk_customer/ui/utils/common_utils.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/platform.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_cloud_custom_data.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message_change_info.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
 
 class MessageReactionUtils {
+
   static final TCustomerSelfInfoViewModel selfInfoModel =
       serviceLocator<TCustomerSelfInfoViewModel>();
   static final TCustomerMessageService _messageService =
@@ -19,10 +23,8 @@ class MessageReactionUtils {
   static CloudCustomData getCloudCustomData(V2TimMessage message) {
     CloudCustomData messageCloudCustomData;
     try {
-      messageCloudCustomData = CloudCustomData.fromJson(json.decode(
-          TencentDeskUtils.checkString(message.cloudCustomData) != null
-              ? message.cloudCustomData!
-              : "{}"));
+      messageCloudCustomData = CloudCustomData.fromJson(
+          json.decode(TencentDeskUtils.checkString(message.cloudCustomData) != null ? message.cloudCustomData! : "{}"));
     } catch (e) {
       messageCloudCustomData = CloudCustomData();
     }
@@ -34,11 +36,9 @@ class MessageReactionUtils {
     return getCloudCustomData(message).messageReaction ?? {};
   }
 
-  static Future<V2TimValueCallback<V2TimMessageChangeInfo>> clickOnSticker(
-      V2TimMessage message, int sticker) async {
+  static Future<V2TimValueCallback<V2TimMessageChangeInfo>> clickOnSticker(V2TimMessage message, int sticker) async {
     final CloudCustomData messageCloudCustomData = getCloudCustomData(message);
-    final Map<String, dynamic> messageReaction =
-        messageCloudCustomData.messageReaction ?? {};
+    final Map<String, dynamic> messageReaction = messageCloudCustomData.messageReaction ?? {};
     List targetList = messageReaction["$sticker"] ?? [];
     if (targetList.contains(selfInfoModel.loginInfo!.userID!)) {
       targetList.remove(selfInfoModel.loginInfo!.userID!);
@@ -49,8 +49,7 @@ class MessageReactionUtils {
 
     if (PlatformUtils().isWeb) {
       final decodedMessage = jsonDecode(message.messageFromWeb!);
-      decodedMessage["cloudCustomData"] =
-          jsonEncode(messageCloudCustomData.toMap());
+      decodedMessage["cloudCustomData"] = jsonEncode(messageCloudCustomData.toMap());
       message.messageFromWeb = jsonEncode(decodedMessage);
     } else {
       message.cloudCustomData = json.encode(messageCloudCustomData.toMap());

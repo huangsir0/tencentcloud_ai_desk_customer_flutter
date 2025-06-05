@@ -9,8 +9,10 @@ import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dar
 import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/platform.dart';
 import 'package:tencent_cloud_chat_sdk/enum/V2TimConversationListener.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_callback.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_callback.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_callback.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_conversation.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_conversation.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 
 List<T> removeDuplicates<T>(List<T> list, bool Function(T first, T second) isEqual) {
@@ -82,7 +84,7 @@ class TCustomerConversationViewModel extends ChangeNotifier {
       if (!PlatformUtils().isWeb) {
         loadInitConversation();
       }
-    }, onConversationDeleted:(List<String> conversationIDList) {
+    }, onConversationDeleted: (List<String> conversationIDList) {
       _onConversationDeleted(conversationIDList);
       for (var conversationID in conversationIDList) {
         String resultID = "";
@@ -126,7 +128,9 @@ class TCustomerConversationViewModel extends ChangeNotifier {
       } else {
         combinedConversationList = [..._conversationList, ...conversationList];
       }
-      _conversationList = removeDuplicates<V2TimConversation?>(combinedConversationList, (item1, item2) => item1?.conversationID == item2?.conversationID);
+      final List<V2TimConversation?> finalConversationList = combinedConversationList;
+      _conversationList = removeDuplicates<V2TimConversation?>(
+          finalConversationList, (item1, item2) => item1?.conversationID == item2?.conversationID);
       notifyListeners();
     }
     notifyListeners();
@@ -151,7 +155,8 @@ class TCustomerConversationViewModel extends ChangeNotifier {
       int index = _conversationList.indexWhere((item) => item!.conversationID == list[i]);
       if (index > -1) {
         _conversationList.removeAt(index);
-        _conversationList = removeDuplicates<V2TimConversation?>(_conversationList, (item1, item2) => item1?.conversationID == item2?.conversationID);
+        _conversationList = removeDuplicates<V2TimConversation?>(
+            _conversationList, (item1, item2) => item1?.conversationID == item2?.conversationID);
       }
     }
     notifyListeners();
@@ -159,7 +164,8 @@ class TCustomerConversationViewModel extends ChangeNotifier {
 
   _addNewConversation(List<V2TimConversation> list) {
     _conversationList.addAll(list);
-    _conversationList = removeDuplicates<V2TimConversation?>(_conversationList, (item1, item2) => item1?.conversationID == item2?.conversationID);
+    _conversationList = removeDuplicates<V2TimConversation?>(
+        _conversationList, (item1, item2) => item1?.conversationID == item2?.conversationID);
     notifyListeners();
   }
 
@@ -178,13 +184,16 @@ class TCustomerConversationViewModel extends ChangeNotifier {
     String? groupID,
     bool isAllowWeb = true,
   }) async {
-    assert(!isTopic || (groupID != null && groupID.isNotEmpty), "When 'isTopic' is true, 'groupID' must not be null or empty.");
+    assert(!isTopic || (groupID != null && groupID.isNotEmpty),
+        "When 'isTopic' is true, 'groupID' must not be null or empty.");
     if (PlatformUtils().isWeb && isAllowWeb) {
       webDraftMap[conversationID] = draftText ?? "";
       return V2TimCallback(code: 0, desc: "");
     } else {
       if (isTopic) {
-        final topicInfoList = await TencentImSDKPlugin.v2TIMManager.getGroupManager().getTopicInfoList(groupID: groupID!, topicIDList: [conversationID]);
+        final topicInfoList = await TencentImSDKPlugin.v2TIMManager
+            .getGroupManager()
+            .getTopicInfoList(groupID: groupID!, topicIDList: [conversationID]);
         final topicInfo = topicInfoList.data?.first.topicInfo;
         topicInfo?.draftText = draftText;
         final res = await TencentImSDKPlugin.v2TIMManager.getGroupManager().setTopicInfo(topicInfo: topicInfo!);

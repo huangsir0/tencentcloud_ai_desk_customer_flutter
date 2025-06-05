@@ -18,10 +18,11 @@ import 'package:tencentcloud_ai_desk_customer/ui/utils/permission.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/platform.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitMessageItem/tim_uikit_chat_videoplayer.dart';
 import 'package:tencent_cloud_chat_sdk/enum/message_status.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_video_elem.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_video_elem.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_video_elem.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_callback.dart';
-import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 import 'package:universal_html/html.dart' as html;
 
 class VideoScreen extends StatefulWidget {
@@ -255,7 +256,7 @@ class _VideoScreenState extends TIMUIKitState<VideoScreen> {
                   }
                   return null;
                 },
-                child: TIMUIKitVideoPlayer(
+                child: TDeskUIKitVideoPlayer(
                   message: widget.message,
                   controller: true,
                   isSending: widget.message.status == MessageStatus.V2TIM_MSG_STATUS_SENDING,
@@ -268,7 +269,7 @@ class _VideoScreenState extends TIMUIKitState<VideoScreen> {
               child: IconButton(
                 icon: Image.asset(
                   'images/close.png',
-                  package: 'tencent_cloud_chat_uikit',
+                  package: 'tencentcloud_ai_desk_customer',
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -281,7 +282,7 @@ class _VideoScreenState extends TIMUIKitState<VideoScreen> {
               child: IconButton(
                 icon: Image.asset(
                   'images/download.png',
-                  package: 'tencent_cloud_chat_uikit',
+                  package: 'tencentcloud_ai_desk_customer',
                 ),
                 onPressed: () async {
                   await _saveVideo();

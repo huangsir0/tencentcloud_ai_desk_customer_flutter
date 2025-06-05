@@ -1,14 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_status.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_user_status.dart';
 import 'package:tencentcloud_ai_desk_customer/business_logic/view_models/tui_self_info_view_model.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/utils/common_utils.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/widgets/image_screen.dart';
-
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_statelesswidget.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/core/core_services_implements.dart';
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_status.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 
 class Avatar extends TIMUIKitStatelessWidget {
@@ -134,8 +134,7 @@ class Avatar extends TIMUIKitStatelessWidget {
               Navigator.of(context).push(
                 PageRouteBuilder(
                   opaque: false, // set to false
-                  pageBuilder: (_, __, ___) => ImageScreen(
-                      imageProvider: getImageProvider(), heroTag: faceUrl),
+                  pageBuilder: (_, __, ___) => ImageScreen(imageProvider: getImageProvider(), heroTag: faceUrl),
                 ),
               );
             },
@@ -151,9 +150,8 @@ class Avatar extends TIMUIKitStatelessWidget {
           ),
         if (!isShowBigWhenClick)
           ClipRRect(
-            borderRadius: borderRadius ??
-                selfInfoViewModel.globalConfig?.defaultAvatarBorderRadius ??
-                BorderRadius.circular(4.8),
+            borderRadius:
+                borderRadius ?? selfInfoViewModel.globalConfig?.defaultAvatarBorderRadius ?? BorderRadius.circular(4.8),
             child: getImageWidget(context, theme),
           ),
         if (onlineStatus?.statusType != null && onlineStatus?.statusType != 0)

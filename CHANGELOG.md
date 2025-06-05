@@ -1,4 +1,15 @@
 
+# 1.4.0
+
+## Breaking Changes
+
+- Upgraded the underlying `tencent_cloud_chat_sdk` to version **^8.6.7019+2**, which is **not backward compatible** with versions 8.5 and earlier.
+- Refactored the file import structure in the `tencent_cloud_chat_sdk` package.
+
+## Optimized
+
+- Made the `customerServiceID` parameter in `navigate` optional, with a default fallback to `"@customer_service_account"` when not provided.
+
 # 1.3.1
 
 ## Added

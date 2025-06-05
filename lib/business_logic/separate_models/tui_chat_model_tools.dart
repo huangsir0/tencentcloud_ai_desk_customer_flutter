@@ -6,21 +6,20 @@ import 'package:tencentcloud_ai_desk_customer/data_services/core/core_services_i
 import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
 import 'package:tencent_cloud_chat_sdk/enum/message_elem_type.dart';
 import 'package:tencent_cloud_chat_sdk/enum/offlinePushInfo.dart';
-import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
 
 class TCustomerChatModelTools {
   final TCustomerChatGlobalModel globalModel = serviceLocator<TCustomerChatGlobalModel>();
   final TCustomerCoreServicesImpl _coreServices = serviceLocator<TCustomerCoreServicesImpl>();
 
-  OfflinePushInfo buildMessagePushInfo(
-      V2TimMessage message, String convID, ConvType convType) {
+  OfflinePushInfo buildMessagePushInfo(V2TimMessage message, String convID, ConvType convType) {
     String createJSON(String convID) {
       return "{\"conversationID\": \"$convID\"}";
     }
 
     if (globalModel.chatConfig.offlinePushInfo != null) {
-      final customData =
-          globalModel.chatConfig.offlinePushInfo!(message, convID, convType);
+      final customData = globalModel.chatConfig.offlinePushInfo!(message, convID, convType);
       if (customData != null) {
         return customData;
       }
@@ -31,12 +30,8 @@ class TCustomerChatModelTools {
     // If user provides null, use default ext.
     String ext = globalModel.chatConfig.notificationExt != null
         ? globalModel.chatConfig.notificationExt!(message, convID, convType) ??
-            (convType == ConvType.c2c
-                ? createJSON("c2c_${message.sender}")
-                : createJSON("group_$convID"))
-        : (convType == ConvType.c2c
-            ? createJSON("c2c_${message.sender}")
-            : createJSON("group_$convID"));
+            (convType == ConvType.c2c ? createJSON("c2c_${message.sender}") : createJSON("group_$convID"))
+        : (convType == ConvType.c2c ? createJSON("c2c_${message.sender}") : createJSON("group_$convID"));
 
     String desc = message.userID ?? message.groupID ?? "";
     String messageSummary = "";
@@ -74,23 +69,22 @@ class TCustomerChatModelTools {
     }
 
     if (globalModel.chatConfig.notificationBody != null) {
-      desc =
-          globalModel.chatConfig.notificationBody!(message, convID, convType) ??
-              messageSummary;
+      desc = globalModel.chatConfig.notificationBody!(message, convID, convType) ?? messageSummary;
     } else {
       desc = messageSummary;
     }
 
-    return OfflinePushInfo.fromJson({
-      "title": title,
-      "desc": desc,
-      "disablePush": false,
-      "ext": ext,
-      "iOSSound": globalModel.chatConfig.notificationIOSSound,
-      "androidSound": globalModel.chatConfig.notificationAndroidSound,
-      "ignoreIOSBadge": false,
-      "androidOPPOChannelID": globalModel.chatConfig.notificationOPPOChannelID,
-    });
+    return OfflinePushInfo(
+      title: title,
+      desc: desc,
+      disablePush: false,
+      ext: ext,
+      iOSSound: globalModel.chatConfig.notificationIOSSound,
+      androidSound: globalModel.chatConfig.notificationAndroidSound,
+      ignoreIOSBadge: false,
+      androidOPPOChannelID: globalModel.chatConfig.notificationOPPOChannelID,
+      androidVIVOClassification: 1,
+    );
   }
 
   V2TimMessage setUserInfoForMessage(V2TimMessage messageInfo, String? id) {
@@ -100,18 +94,15 @@ class TCustomerChatModelTools {
       messageInfo.nickName = loginUserInfo.nickName;
       messageInfo.sender = loginUserInfo.userID;
     }
-    messageInfo.timestamp =
-        (DateTime.now().millisecondsSinceEpoch / 1000).ceil();
+    messageInfo.timestamp = (DateTime.now().millisecondsSinceEpoch / 1000).ceil();
     messageInfo.isSelf = true;
     messageInfo.id = id;
 
     return messageInfo;
   }
 
-  String getMessageSummary(V2TimMessage message,
-      String? Function(V2TimMessage message)? abstractMessageBuilder) {
-    final String? customAbstractMessage =
-        abstractMessageBuilder != null ? abstractMessageBuilder(message) : null;
+  String getMessageSummary(V2TimMessage message, String? Function(V2TimMessage message)? abstractMessageBuilder) {
+    final String? customAbstractMessage = abstractMessageBuilder != null ? abstractMessageBuilder(message) : null;
     if (customAbstractMessage != null) {
       return customAbstractMessage;
     }
@@ -157,18 +148,13 @@ class TCustomerChatModelTools {
   }
 
   Future<V2TimMessage?> getExistingMessageByID(
-      {required String msgID,
-      required String conversationID,
-      required ConvType conversationType}) async {
-    final currentHistoryMsgList =
-        globalModel.messageListMap[conversationID] ?? [];
+      {required String msgID, required String conversationID, required ConvType conversationType}) async {
+    final currentHistoryMsgList = globalModel.messageListMap[conversationID] ?? [];
     final int? targetIndex = currentHistoryMsgList.indexWhere((item) {
       return item.msgID == msgID;
     });
 
-    if (targetIndex != null &&
-        targetIndex > -1 &&
-        currentHistoryMsgList.isNotEmpty) {
+    if (targetIndex != null && targetIndex > -1 && currentHistoryMsgList.isNotEmpty) {
       return currentHistoryMsgList[targetIndex];
     } else {
       return null;

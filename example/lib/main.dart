@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 
 import 'config.dart';
+import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +38,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _userIdController = TextEditingController();
   bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Map<String, dynamic> param = {"request_set_env_param": true};
+    TencentImSDKPlugin.v2TIMManager.callExperimentalAPI(api: "internal_operation_set_env", param: param);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: _isLoggedIn ? null : () async {
                   final userId = _userIdController.text.trim();
                   if (userId.isNotEmpty) {
+                    // Map<String, dynamic> param = {"request_set_env_param": true};
+                    // TencentImSDKPlugin.v2TIMManager.callExperimentalAPI(api: "internal_operation_set_env", param: param);
                     final res = await TencentCloudAIDeskCustomer.init(
                       sdkAppID: TencentCloudDeskCustomerDemoConfig.sdkAppID,
                       userID: userId,
@@ -143,7 +154,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: _isLoggedIn
                     ? () {
                   TencentCloudAIDeskCustomer.navigate(
-                    customerServiceID: TencentCloudDeskCustomerDemoConfig.customerServiceID,
                     context: context,
                   );
                 }
