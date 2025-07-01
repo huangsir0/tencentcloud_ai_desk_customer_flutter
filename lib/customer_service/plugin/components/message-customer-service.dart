@@ -240,6 +240,17 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
             ),
           ),
         );
+      case CUSTOM_MESSAGE_SRC.TIMEOUT_REMINDER:
+        return Align(
+          alignment: Alignment.center,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+                mapData["content"],
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
+            ),
+          ),
+        );
     }
 
     return Container();

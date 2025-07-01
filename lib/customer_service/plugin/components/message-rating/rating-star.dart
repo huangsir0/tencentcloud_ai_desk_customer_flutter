@@ -75,7 +75,7 @@ class _RatingStarState extends TIMState<RatingStar> {
       Container(
         child: Text(
           header,
-          style: const TextStyle(color: Colors.grey, fontSize: 10),
+          style: const TextStyle(color: Colors.grey, fontSize: 12),
         ),
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       ),

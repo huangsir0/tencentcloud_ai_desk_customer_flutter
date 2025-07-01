@@ -62,6 +62,8 @@ class CUSTOM_MESSAGE_SRC {
   static const String FORM_SAVE = '33';
   // 大模型思考中
   static const String MODEL_THINKING = '35';
+  // 用户端会话超时提醒
+  static const String TIMEOUT_REMINDER = '37';
 }
 
 class RATING_TEMPLATE_TYPE {

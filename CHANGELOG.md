@@ -1,3 +1,18 @@
+# 1.4.3
+
+## Added
+
+- Added support for conversation timeout reminder.
+
+## Optimized
+
+- Adjusted font size for post-chat rating messages.
+
+# 1.4.1
+
+## Optimized
+
+- Added support for launching link in stream messages.
 
 # 1.4.0
 
