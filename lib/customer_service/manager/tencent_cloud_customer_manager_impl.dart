@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tencent_cloud_chat_sdk/enum/V2TimSDKListener.dart';
 import 'package:tencent_cloud_chat_sdk/enum/log_level_enum.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_callback.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/data/tencent_cloud_customer_data.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/utils/tencent_cloud_customer_logger.dart';
@@ -13,7 +14,7 @@ import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dar
 import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 
 typedef TencentCloudCustomerInit = Future<V2TimCallback> Function(
-    {TencentCloudCustomerConfig? config, required int sdkAppID, required String userID, required String userSig});
+    {TencentCloudCustomerConfig? config, required int sdkAppID, required String userID, required String userSig, String? nickName, String? avatar,});
 typedef TencentCloudCustomerNavigate = V2TimCallback Function(
     {TencentCloudCustomerConfig? config, required BuildContext context, String? customerServiceID});
 typedef TencentCloudCustomerDispose = Future<V2TimCallback> Function();
@@ -28,6 +29,8 @@ class TencentCloudCustomerManagerImpl {
     required int sdkAppID,
     required String userID,
     required String userSig,
+    String? nickName,
+    String? avatar,
     TencentCloudCustomerConfig? config,
   }) async {
     setupIMServiceLocator();
@@ -85,6 +88,13 @@ class TencentCloudCustomerManagerImpl {
           userID: userID,
           userSig: userSig,
         );
+        if(nickName != null || avatar != null){
+          V2TimUserFullInfo userInfo = V2TimUserFullInfo(
+            nickName: nickName,
+            faceUrl: avatar,
+          );
+          _timCoreInstance.setSelfInfo(userFullInfo: userInfo);
+        }
       } else {
         _initializedFailedRes = loginRes;
       }

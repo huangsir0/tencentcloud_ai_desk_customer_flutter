@@ -1,3 +1,9 @@
+# 1.5.0
+
+## Added
+
+- Added support for specifying nickname and avatar for current user when init.
+
 # 1.4.3
 
 ## Added

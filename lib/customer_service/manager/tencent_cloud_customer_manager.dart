@@ -18,12 +18,16 @@ class TencentCloudCustomerManager {
     required int sdkAppID,
     required String userID,
     required String userSig,
+    String? nickName,
+    String? avatar,
     TencentCloudCustomerConfig? config,
   }) async {
     return _tencentCloudCustomerManagerImpl.init(
       sdkAppID: sdkAppID,
       userID: userID,
       userSig: userSig,
+      nickName: nickName,
+      avatar: avatar,
       config: config,
     );
   }
