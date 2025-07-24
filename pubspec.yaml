@@ -43,8 +43,8 @@ dependencies:
   shared_preferences: ^2.0.13
   # scroll_to_index: ^2.1.1
   scroll_to_index: ^3.0.1
-  # wechat_assets_picker: ^9.3.3
-  wechat_assets_picker: ^8.7.0
+  wechat_assets_picker: ^9.3.3
+#  wechat_assets_picker: ^8.7.0
   flutter_easyrefresh: ^2.2.1
   # extended_image: ^9.1.0
   extended_image: ^8.1.0
