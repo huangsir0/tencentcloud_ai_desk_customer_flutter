@@ -68,7 +68,7 @@ class TIMUIKitHistoryMessageList extends StatefulWidget {
   final List<V2TimMessage?> messageList;
 
   /// tongue item builder
-  final TongueItemBuilder? tongueItemBuilder;
+  final DeskTongueItemBuilder? tongueItemBuilder;
 
   /// group at info, it can get from conversation info
   final List<V2TimGroupAtInfo?>? groupAtInfoList;

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_config.dart';
+import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_builders.dart';
+import 'package:tencentcloud_ai_desk_customer/ui/controller/tim_uikit_chat_controller.dart';
 
 enum TDeskDataCenter {
   mainlandChina,
@@ -8,6 +10,7 @@ enum TDeskDataCenter {
 
 class TencentCloudCustomerData extends ChangeNotifier {
   TencentCloudCustomerConfig globalConfig = TencentCloudCustomerConfig();
+  TencentCloudCustomerMessageBuilders globalBuilders = TencentCloudCustomerMessageBuilders();
 
   TDeskDataCenter tDeskDataCenter = TDeskDataCenter.international;
 }

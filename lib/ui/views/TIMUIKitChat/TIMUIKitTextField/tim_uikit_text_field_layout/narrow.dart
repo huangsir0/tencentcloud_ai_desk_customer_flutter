@@ -509,6 +509,9 @@ class _TIMUIKitTextFieldLayoutNarrowState extends TIMUIKitState<TIMUIKitTextFiel
                                             });
                                           },
                                           textAlignVertical: TextAlignVertical.top,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                          ),
                                           decoration: InputDecoration(
                                               border: InputBorder.none,
                                               hintStyle: const TextStyle(

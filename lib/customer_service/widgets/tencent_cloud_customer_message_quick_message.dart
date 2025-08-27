@@ -35,7 +35,13 @@ class TencentCloudCustomerMessageQuickMessage extends StatelessWidget {
                       right: 8,
                     ),
                   ),
-                Text(quickMessage.label, style: const TextStyle(fontSize: 13),),
+                Text(
+                  quickMessage.label,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.black87,
+                  ),
+                ),
               ],
             ),
           ),

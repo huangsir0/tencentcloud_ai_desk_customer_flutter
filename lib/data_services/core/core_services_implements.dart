@@ -190,7 +190,7 @@ class TCustomerCoreServicesImpl implements CoreServices {
 
     tuiConversationViewModel.setConversationListener();
     tuiChatViewModel.addAdvancedMsgListener();
-    tuiGroupListenerModel.setGroupListener();
+    // tuiGroupListenerModel.setGroupListener();
   }
 
   void removeListener() {

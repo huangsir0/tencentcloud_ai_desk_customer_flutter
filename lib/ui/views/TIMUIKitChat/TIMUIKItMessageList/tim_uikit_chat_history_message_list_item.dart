@@ -89,7 +89,7 @@ class MessageHoverControlItem {
   MessageHoverControlItem({required this.name, required this.icon, required this.onClick});
 }
 
-class MessageItemBuilder {
+class DeskMessageItemBuilder {
   /// text message builder, returns null means using default widget.
   final MessageItemContent? textMessageItemBuilder;
 
@@ -131,7 +131,7 @@ class MessageItemBuilder {
   /// message nick name builder
   final MessageNickNameBuilder? messageNickNameBuilder;
 
-  MessageItemBuilder({
+  DeskMessageItemBuilder({
     this.locationMessageItemBuilder,
     this.textMessageItemBuilder,
     this.textReplyMessageItemBuilder,
@@ -220,7 +220,7 @@ class TIMUIKitHistoryMessageListItem extends StatefulWidget {
   final Function(String? userId, String? nickName)? onLongPressForOthersHeadPortrait;
 
   /// message item builder, works for customize all message types and row layout.
-  final MessageItemBuilder? messageItemBuilder;
+  final DeskMessageItemBuilder? messageItemBuilder;
 
   /// Control avatar hide or show
   final bool showAvatar;
@@ -414,7 +414,7 @@ class _TIMUIKItHistoryMessageListItemState extends TIMUIKitState<TIMUIKitHistory
   Widget _messageItemBuilder(V2TimMessage messageItem, TUIChatSeparateViewModel model) {
     final msgType = messageItem.elemType;
     final isShowJump = (model.jumpMsgID == messageItem.msgID) && (messageItem.msgID?.isNotEmpty ?? false);
-    final MessageItemBuilder? messageItemBuilder = widget.messageItemBuilder;
+    final DeskMessageItemBuilder? messageItemBuilder = widget.messageItemBuilder;
     final isFromSelf = messageItem.isSelf ?? true;
     void clearJump() {
       Future.delayed(const Duration(milliseconds: 100), () {

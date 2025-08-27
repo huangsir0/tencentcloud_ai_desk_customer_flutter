@@ -6,6 +6,8 @@ import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/data/tencent_cloud_customer_data.dart';
+import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_builders.dart';
+import 'package:tencentcloud_ai_desk_customer/customer_service/plugin/components/message-bubble-button.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/plugin/components/message-customer-service.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/plugin/tencent_cloud_chat_customer_service_plugin.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_ui_kit_base.dart';
@@ -30,23 +32,30 @@ import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_ch
 class TencentCloudCustomerMessageContainer extends StatefulWidget {
   final String customerServiceUserID;
   final TencentCloudCustomerConfig config;
+  final TencentCloudCustomerMessageBuilders builder;
+  final TencentCloudDeskCustomerController controller;
 
   const TencentCloudCustomerMessageContainer({
     super.key,
     required this.customerServiceUserID,
     required this.config,
+    required this.builder,
+    required this.controller,
   });
 
   @override
-  State<TencentCloudCustomerMessageContainer> createState() => _TencentCloudCustomerMessageContainerState();
+  State<TencentCloudCustomerMessageContainer> createState() =>
+      _TencentCloudCustomerMessageContainerState();
 }
 
-class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCloudCustomerMessageContainer> {
-  final TCustomerConversationViewModel _conversationViewModel = serviceLocator<TCustomerConversationViewModel>();
-  final TCustomerConversationService _conversationService = serviceLocator<TCustomerConversationService>();
-  final TencentCloudCustomerData _tencentCloudCustomerData = serviceLocator<TencentCloudCustomerData>();
-
-  final TIMUIKitChatController _chatController = TIMUIKitChatController();
+class _TencentCloudCustomerMessageContainerState
+    extends TIMUIKitState<TencentCloudCustomerMessageContainer> {
+  final TCustomerConversationViewModel _conversationViewModel =
+      serviceLocator<TCustomerConversationViewModel>();
+  final TCustomerConversationService _conversationService =
+      serviceLocator<TCustomerConversationService>();
+  final TencentCloudCustomerData _tencentCloudCustomerData =
+      serviceLocator<TencentCloudCustomerData>();
 
   V2TimConversation? _customerServiceConversation;
   String? _customerServiceTyping;
@@ -70,13 +79,16 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
 
   _sendStartMessage(int times) {
     final TDeskAppLocale language = widget.config.language ??
-        TDesk_getCurrentDeviceLocaleInLocale(_tencentCloudCustomerData.tDeskDataCenter == TDeskDataCenter.mainlandChina
-            ? TDeskAppLocale.zhHans
-            : TDeskAppLocale.en);
+        TDesk_getCurrentDeviceLocaleInLocale(
+            _tencentCloudCustomerData.tDeskDataCenter ==
+                    TDeskDataCenter.mainlandChina
+                ? TDeskAppLocale.zhHans
+                : TDeskAppLocale.en);
     Future.delayed(const Duration(milliseconds: 50), () {
       try {
         TencentCloudChatCustomerServicePlugin.sendCustomerServiceStartMessage(
-            _chatController.sendMessage, languageLocaleToDeskString[language] ?? "en");
+            widget.controller.sendMessage,
+            languageLocaleToDeskString[language] ?? "en");
       } catch (e) {
         if (times < 4) {
           Future.delayed(const Duration(milliseconds: 200), () {
@@ -100,10 +112,12 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
             width: 13,
           ),
           onTap: () async {
-            final textMessage =
-                await TencentImSDKPlugin.v2TIMManager.getMessageManager().createTextMessage(text: TDesk_t("人工服务"));
+            final textMessage = await TencentImSDKPlugin.v2TIMManager
+                .getMessageManager()
+                .createTextMessage(text: TDesk_t("人工服务"));
             if (textMessage.data?.messageInfo != null) {
-              _chatController.sendMessage(messageInfo: textMessage.data!.messageInfo!);
+              widget.controller
+                  .sendMessage(messageInfo: textMessage.data!.messageInfo!);
             }
           },
         ),
@@ -117,11 +131,14 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
 
   Future<V2TimConversation> _loadConversation() async {
     final conversationID = "c2c_${widget.customerServiceUserID}";
-    V2TimConversation? targetConversation = _conversationViewModel.getConversation(conversationID) ??
-        await _conversationService.getConversation(conversationID: conversationID);
+    V2TimConversation? targetConversation =
+        _conversationViewModel.getConversation(conversationID) ??
+            await _conversationService.getConversation(
+                conversationID: conversationID);
     if (targetConversation == null) {
       V2TimUserFullInfo? userProfile;
-      final userProfileRes = await TencentImSDKPlugin.v2TIMManager.getUsersInfo(userIDList: [
+      final userProfileRes =
+          await TencentImSDKPlugin.v2TIMManager.getUsersInfo(userIDList: [
         widget.customerServiceUserID,
       ]);
       if (userProfileRes.data != null && userProfileRes.data!.isNotEmpty) {
@@ -146,26 +163,28 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
   }
 
   Widget? _quickMessagesWidget() {
-    return _quickMessages.isNotEmpty
-        ? SizedBox(
-            height: 50,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: _quickMessages.map((quickMessage) {
-                return Container(
-                  margin: const EdgeInsets.only(
-                    left: 16,
-                    bottom: 4,
-                    top: 12,
-                  ),
-                  child: TencentCloudCustomerMessageQuickMessage(
-                    quickMessage: quickMessage,
-                  ),
-                );
-              }).toList(),
-            ),
-          )
-        : null;
+    return widget.builder.quickMessagesBuilder != null
+        ? widget.builder.quickMessagesBuilder!(quickMessages: _quickMessages)
+        : _quickMessages.isNotEmpty
+            ? SizedBox(
+                height: 50,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: _quickMessages.map((quickMessage) {
+                    return Container(
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        bottom: 4,
+                        top: 12,
+                      ),
+                      child: TencentCloudCustomerMessageQuickMessage(
+                        quickMessage: quickMessage,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              )
+            : null;
   }
 
   @override
@@ -174,25 +193,41 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
     final targetConversation = _customerServiceConversation;
     return targetConversation != null
         ? TencentCloudCustomerMessage(
+            backgroundImage: widget.config.backgroundImageAsset,
             conversation: targetConversation,
-            customAppBar: TencentCloudCustomerMessageHeader(
-              conversation: targetConversation,
-              headerLabel: _customerServiceTyping,
-            ),
+            customAppBar: widget.builder.headerBuilder != null
+                ? widget.builder.headerBuilder!(
+                    conversation: targetConversation,
+                    targetTypingIndicator: _customerServiceTyping,
+                  )
+                : TencentCloudCustomerMessageHeader(
+                    conversation: targetConversation,
+                    headerLabel: _customerServiceTyping,
+                  ),
             inputTopBuilder: _quickMessagesWidget(),
-            tongueItemBuilder: (VoidCallback onClick, MessageListTongueType valueType, int unreadCount) =>
-                TencentCloudCustomerTongueItem(
-              onClick: onClick,
-              valueType: valueType,
-              previousCount: 0,
-              unreadCount: unreadCount,
-              atNum: "",
-            ),
-            conversationShowName: _customerServiceTyping ?? targetConversation.showName,
+            tongueItemBuilder: (VoidCallback onClick,
+                    MessageListTongueType valueType, int unreadCount) =>
+                widget.builder.tongueItemBuilder != null
+                    ? widget.builder.tongueItemBuilder!(
+                        onClick,
+                        valueType,
+                        unreadCount,
+                      )
+                    : TencentCloudCustomerTongueItem(
+                        onClick: onClick,
+                        valueType: valueType,
+                        previousCount: 0,
+                        unreadCount: unreadCount,
+                        atNum: "",
+                      ),
+            conversationShowName:
+                _customerServiceTyping ?? targetConversation.showName,
             lifeCycle: ChatLifeCycle(
               newMessageWillMount: (V2TimMessage message) async {
-                if (TencentCloudChatCustomerServicePlugin.isCustomerServiceMessage(message)) {
-                  if (TencentCloudChatCustomerServicePlugin.isTypingCustomerServiceMessage(message)) {
+                if (TencentCloudChatCustomerServicePlugin
+                    .isCustomerServiceMessage(message)) {
+                  if (TencentCloudChatCustomerServicePlugin
+                      .isTypingCustomerServiceMessage(message)) {
                     setState(() {
                       _customerServiceTyping = TDesk_t("对方正在输入中...");
                     });
@@ -205,8 +240,10 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
                 return message;
               },
               messageShouldMount: (V2TimMessage message) {
-                if (TencentCloudChatCustomerServicePlugin.isCustomerServiceMessage(message)) {
-                  return !TencentCloudChatCustomerServicePlugin.isCustomerServiceMessageInvisible(message) &&
+                if (TencentCloudChatCustomerServicePlugin
+                    .isCustomerServiceMessage(message)) {
+                  return !TencentCloudChatCustomerServicePlugin
+                          .isCustomerServiceMessageInvisible(message) &&
                       !(message.isSelf ?? true);
                 }
                 return true;
@@ -234,7 +271,7 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
                 customStickerPackages: [],
               ),
             ),
-            messageItemBuilder: MessageItemBuilder(
+            messageItemBuilder: DeskMessageItemBuilder(
               messageRowBuilder: (
                 V2TimMessage message,
                 Widget messageWidget,
@@ -243,7 +280,8 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
                 VoidCallback clearJumpStatus,
                 Function onScrollToIndexBegin,
               ) {
-                if (TencentCloudChatCustomerServicePlugin.isCustomerServiceMessage(message)) {
+                if (TencentCloudChatCustomerServicePlugin
+                    .isCustomerServiceMessage(message)) {
                   return Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     margin: const EdgeInsets.only(
@@ -258,23 +296,93 @@ class _TencentCloudCustomerMessageContainerState extends TIMUIKitState<TencentCl
                     ),
                   );
                 }
-                return null;
+                return widget.builder.regularMessageItemBuilder
+                            ?.messageRowBuilder !=
+                        null
+                    ? widget
+                        .builder.regularMessageItemBuilder!.messageRowBuilder!(
+                        message,
+                        messageWidget,
+                        onScrollToIndex,
+                        isNeedShowJumpStatus,
+                        clearJumpStatus,
+                        onScrollToIndexBegin,
+                      )
+                    : null;
               },
               customMessageItemBuilder: (message, isShowJump, clearJump) {
-                if (TencentCloudChatCustomerServicePlugin.isCustomerServiceMessage(message)) {
-                  return MessageCustomerService(
+                if (TencentCloudChatCustomerServicePlugin
+                    .isCustomerServiceMessage(message)) {
+                  Widget? botMessage =
+                      widget.builder.deskChatBotMessagesBuilder != null
+                          ? widget.builder.deskChatBotMessagesBuilder!(
+                              message: message,
+                              isShowJump: isShowJump,
+                              clearJump: clearJump,
+                            )
+                          : null;
+                  botMessage ??= MessageCustomerService(
                     message: message,
                     textPadding: const EdgeInsets.all(16),
                     messageBackgroundColor: Colors.white,
                     theme: theme,
                     isShowJumpState: isShowJump,
-                    sendMessage: _chatController.sendMessage,
+                    sendMessage: widget.controller.sendMessage,
+                  );
+                  return Column(
+                    crossAxisAlignment: message.isSelf ?? true
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                    children: [
+                      botMessage,
+                      MessageBubbleButton(
+                        message: message,
+                        showAINote:
+                            TencentCloudChatCustomerServicePlugin.canShowAINote(
+                                    message) &&
+                                (widget.config.enableAINote != null
+                                    ? widget.config.enableAINote!
+                                    : true),
+                      )
+                    ],
                   );
                 }
-                return null;
+                return widget.builder.regularMessageItemBuilder
+                            ?.customMessageItemBuilder !=
+                        null
+                    ? widget.builder.regularMessageItemBuilder!
+                        .customMessageItemBuilder!(
+                        message,
+                        isShowJump,
+                        clearJump,
+                      )
+                    : null;
               },
+              textMessageItemBuilder: widget
+                  .builder.regularMessageItemBuilder?.textMessageItemBuilder,
+              textReplyMessageItemBuilder: widget.builder
+                  .regularMessageItemBuilder?.textReplyMessageItemBuilder,
+              imageMessageItemBuilder: widget
+                  .builder.regularMessageItemBuilder?.imageMessageItemBuilder,
+              soundMessageItemBuilder: widget
+                  .builder.regularMessageItemBuilder?.soundMessageItemBuilder,
+              videoMessageItemBuilder: widget
+                  .builder.regularMessageItemBuilder?.videoMessageItemBuilder,
+              fileMessageItemBuilder: widget
+                  .builder.regularMessageItemBuilder?.fileMessageItemBuilder,
+              locationMessageItemBuilder: widget.builder
+                  .regularMessageItemBuilder?.locationMessageItemBuilder,
+              faceMessageItemBuilder: widget
+                  .builder.regularMessageItemBuilder?.faceMessageItemBuilder,
+              groupTipsMessageItemBuilder: widget.builder
+                  .regularMessageItemBuilder?.groupTipsMessageItemBuilder,
+              mergerMessageItemBuilder: widget
+                  .builder.regularMessageItemBuilder?.mergerMessageItemBuilder,
+              messageNickNameBuilder: widget
+                  .builder.regularMessageItemBuilder?.messageNickNameBuilder,
             ),
-            controller: _chatController,
+            controller: widget.controller,
+            userAvatarBuilder: widget.builder.userAvatarBuilder,
           )
         : Column(
             children: [

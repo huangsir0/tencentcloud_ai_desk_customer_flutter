@@ -19,14 +19,14 @@ import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart'
     if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_value_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/TIMUIKitTextField/tim_uikit_text_field_controller.dart';
 
-class TIMUIKitChatController {
+class TencentCloudDeskCustomerController {
   late TUIChatSeparateViewModel? model;
   late TIMUIKitInputTextFieldController? textFieldController;
   late AutoScrollController? scrollController;
   final TCustomerChatGlobalModel globalChatModel =
       serviceLocator<TCustomerChatGlobalModel>();
 
-  TIMUIKitChatController({TUIChatSeparateViewModel? viewModel}) {
+  TencentCloudDeskCustomerController({TUIChatSeparateViewModel? viewModel}) {
     if (viewModel != null) {
       model = viewModel;
     }

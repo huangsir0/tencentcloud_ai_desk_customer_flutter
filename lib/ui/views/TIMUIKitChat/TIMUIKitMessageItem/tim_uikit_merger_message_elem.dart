@@ -28,7 +28,7 @@ class TIMUIKitMergerElem extends StatefulWidget {
   final V2TimMessage message;
   final bool? isShowMessageReaction;
   final TUIChatSeparateViewModel model;
-  final MessageItemBuilder? messageItemBuilder;
+  final DeskMessageItemBuilder? messageItemBuilder;
 
   const TIMUIKitMergerElem(
       {Key? key,

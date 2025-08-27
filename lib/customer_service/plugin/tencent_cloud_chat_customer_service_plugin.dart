@@ -7,9 +7,14 @@ import 'package:tencent_cloud_chat_sdk/models/v2_tim_custom_elem.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_value_callback.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
+import 'package:tencent_desk_i18n_tool/language_json/strings.g.dart';
+import 'package:tencentcloud_ai_desk_customer/customer_service/data/tencent_cloud_customer_data.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/plugin/common/utils.dart';
 
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
+import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dart';
+import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
+import 'package:tencentcloud_ai_desk_customer/ui/views/TIMUIKitChat/tim_uikit_cloud_custom_data.dart';
 
 
 class TencentCloudChatCustomerServicePlugin {
@@ -30,6 +35,11 @@ class TencentCloudChatCustomerServicePlugin {
     CUSTOM_MESSAGE_SRC.FORM_SAVE,
     CUSTOM_MESSAGE_SRC.MODEL_THINKING,
     CUSTOM_MESSAGE_SRC.TIMEOUT_REMINDER,
+  ];
+  static List<String> aiNoteMessageTypeList = [
+    'fallback',
+    'faq',
+    'aiReply',
   ];
   static List<String> rowWhiteList = [
     CUSTOM_MESSAGE_SRC.MENU,
@@ -108,6 +118,23 @@ class TencentCloudChatCustomerServicePlugin {
       }
     }
     return false;
+  }
+
+  static bool canShowAINote(V2TimMessage message) {
+    String? custom = message.cloudCustomData;
+
+    if (TencentDeskUtils.checkString(custom) != null) {
+      Map messageCloudCustomData;
+      try {
+        messageCloudCustomData = json.decode(message.cloudCustomData ?? "{}");
+        final String deviceLocale = TDesk_getCurrentDeviceLocale();
+        return aiNoteMessageTypeList.contains(messageCloudCustomData["messageType"] ?? "") && messageCloudCustomData["role"] == 'robot' && (deviceLocale.contains("zh-Hans") || deviceLocale.contains("en"));
+      } catch (e) {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   static bool isCanSendEvaluate(V2TimMessage message) {

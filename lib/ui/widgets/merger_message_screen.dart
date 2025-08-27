@@ -27,7 +27,7 @@ import 'package:tencentcloud_ai_desk_customer/theme/tui_theme_view_model.dart';
 class MergerMessageScreen extends StatefulWidget {
   final TUIChatSeparateViewModel model;
   final String msgID;
-  final MessageItemBuilder? messageItemBuilder;
+  final DeskMessageItemBuilder? messageItemBuilder;
 
   const MergerMessageScreen({Key? key, required this.model, required this.msgID, this.messageItemBuilder})
       : super(key: key);

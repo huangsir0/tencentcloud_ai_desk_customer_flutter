@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/manager/tencent_cloud_customer_manager_impl.dart';
+import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_builders.dart';
 import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
+import 'package:tencentcloud_ai_desk_customer/ui/controller/tim_uikit_chat_controller.dart';
 
 class TencentCloudCustomerManager {
   static final TencentCloudCustomerManager _instance = TencentCloudCustomerManager._internal();
@@ -21,6 +23,7 @@ class TencentCloudCustomerManager {
     String? nickName,
     String? avatar,
     TencentCloudCustomerConfig? config,
+    TencentCloudCustomerMessageBuilders? builders,
   }) async {
     return _tencentCloudCustomerManagerImpl.init(
       sdkAppID: sdkAppID,
@@ -29,6 +32,7 @@ class TencentCloudCustomerManager {
       nickName: nickName,
       avatar: avatar,
       config: config,
+      builders: builders,
     );
   }
 
@@ -36,11 +40,15 @@ class TencentCloudCustomerManager {
     required BuildContext context,
     String? customerServiceID,
     TencentCloudCustomerConfig? config,
+    TencentCloudCustomerMessageBuilders? builders,
+    TencentCloudDeskCustomerController? controller,
   }) {
     return _tencentCloudCustomerManagerImpl.navigate(
       customerServiceID: customerServiceID,
       config: config,
       context: context,
+      builders: builders,
+      controller: controller,
     );
   }
 
