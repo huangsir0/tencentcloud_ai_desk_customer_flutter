@@ -13,7 +13,7 @@ enum MessageListTongueType {
   atAll,
 }
 
-typedef TongueItemBuilder = Widget Function(
+typedef DeskTongueItemBuilder = Widget Function(
     VoidCallback onClick, MessageListTongueType valueType, int unreadCount);
 
 class TIMUIKitHistoryMessageListTongue extends TIMUIKitStatelessWidget {
@@ -27,7 +27,7 @@ class TIMUIKitHistoryMessageListTongue extends TIMUIKitStatelessWidget {
   final int unreadCount;
 
   /// the builder for tongue item
-  final TongueItemBuilder? tongueItemBuilder;
+  final DeskTongueItemBuilder? tongueItemBuilder;
 
   /// total amount of messages at me
   final String atNum;

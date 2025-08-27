@@ -220,7 +220,7 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
               ? textWithLink!(
                   style: widget.fontStyle ??
                       TextStyle(
-                        color: widget.isFromSelf ? Colors.white : null,
+                        color: widget.isFromSelf ? Colors.white : Colors.black,
                           fontSize: isDesktopScreen ? 14 : 15,
                           textBaseline: TextBaseline.ideographic,
                           height: widget.chatModel.chatConfig.textHeight))
@@ -228,7 +228,7 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
                   softWrap: true,
                   style: widget.fontStyle ??
                       TextStyle(
-                          color: widget.isFromSelf ? Colors.white : null,
+                          color: widget.isFromSelf ? Colors.white : Colors.black,
                           fontSize: isDesktopScreen ? 14 : 15,
                           height: widget.chatModel.chatConfig.textHeight),
                   specialTextSpanBuilder: DefaultSpecialTextSpanBuilder(

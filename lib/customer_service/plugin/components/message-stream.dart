@@ -35,6 +35,9 @@ class _MessageStreamState extends TIMState<MessageStream> {
       constraints: const BoxConstraints(maxWidth: 350),
       child: MarkdownBody(
         data: text,
+        styleSheet: MarkdownStyleSheet(
+          p: const TextStyle(color: Colors.black),
+        ),
         onTapLink: (
           String link,
           String? href,

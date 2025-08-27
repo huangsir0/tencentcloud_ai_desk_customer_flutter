@@ -58,7 +58,7 @@ class TencentCloudCustomerMessage extends StatefulWidget {
 
   /// The chat controller you tend to used.
   /// You have to provide this before using it since tencentcloud_ai_desk_customer 0.1.4.
-  final TIMUIKitChatController? controller;
+  final TencentCloudDeskCustomerController? controller;
 
   /// [Update] It is suggested to provide the `V2TimConversation` once directly, since tencentcloud_ai_desk_customer 1.5.0.
   /// `conversationID` / `conversationType` / `groupAtInfoList` / `conversationShowName` are not necessary to be provided, unless you want to cover these fields manually.
@@ -90,12 +90,11 @@ class TencentCloudCustomerMessage extends StatefulWidget {
 
   @Deprecated(
       "Nickname will not shows in one-to-one chat, if you tend to control it in group chat, please use `isShowSelfNameInGroup` and `isShowOthersNameInGroup` from `config: TIMUIKitChatConfig` instead")
-
   /// Should show the nick name.
   final bool showNickName;
 
   /// Message item builder, can customize partial message item for different types or the layout for the whole line.
-  final MessageItemBuilder? messageItemBuilder;
+  final DeskMessageItemBuilder? messageItemBuilder;
 
   /// Is show unread message count, default value is false
   final bool showTotalUnReadCount;
@@ -130,7 +129,7 @@ class TencentCloudCustomerMessage extends StatefulWidget {
   /// The builder for the tongue on the right bottom.
   /// Used for back to bottom, shows the count of unread new messages,
   /// and prompts the messages that @ user.
-  final TongueItemBuilder? tongueItemBuilder;
+  final DeskTongueItemBuilder? tongueItemBuilder;
 
   /// The `groupAtInfoList` from `V2TimConversation`.
   /// This field is not necessary to be provided, when `conversation` is provided,
@@ -187,6 +186,8 @@ class TencentCloudCustomerMessage extends StatefulWidget {
   /// additional network requests to fetch the group member information internally.
   List<V2TimGroupMemberFullInfo?>? groupMemberList;
 
+  final String? backgroundImage;
+
   TencentCloudCustomerMessage(
       {Key? key,
       this.groupID,
@@ -225,6 +226,7 @@ class TencentCloudCustomerMessage extends StatefulWidget {
       this.customAppBar,
       this.inputTopBuilder,
       this.onSecondaryTapAvatar,
+      this.backgroundImage,
       this.customMessageHoverBarOnDesktop})
       : super(key: key) {
     startTime = DateTime.now().millisecondsSinceEpoch;
@@ -501,12 +503,12 @@ class _TUIChatState extends TIMUIKitState<TencentCloudCustomerMessage> {
                     });
                   },
                   child: Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.transparent,
                       image: DecorationImage(
                         image: AssetImage(
-                          'lib/customer_service/assets/customer_background.png',
-                          package: 'tencentcloud_ai_desk_customer',
+                          TencentDeskUtils.checkString(widget.backgroundImage) ?? 'lib/customer_service/assets/customer_background.png',
+                          package: TencentDeskUtils.checkString(widget.backgroundImage) != null ? null : 'tencentcloud_ai_desk_customer',
                         ),
                         fit: BoxFit.fill,
                       ),
@@ -625,7 +627,7 @@ class TIMUIKitChatProviderScope extends StatelessWidget {
   final List<SingleChildWidget>? providers;
 
   /// `TIMUIKitChatController` needs to be provided if you use it outside.
-  final TIMUIKitChatController? controller;
+  final TencentCloudDeskCustomerController? controller;
 
   /// The global config for TIMUIKitChat.
   final TIMUIKitChatConfig? config;

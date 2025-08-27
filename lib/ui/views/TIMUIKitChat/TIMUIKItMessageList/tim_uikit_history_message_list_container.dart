@@ -40,7 +40,7 @@ class TIMUIKitHistoryMessageListContainer extends StatefulWidget {
   final V2TimMessage? initFindingMsg;
 
   /// message item builder, works for customize all message types and row layout.
-  final MessageItemBuilder? messageItemBuilder;
+  final DeskMessageItemBuilder? messageItemBuilder;
 
   /// The controller for text field.
   final TIMUIKitInputTextFieldController? textFieldController;
@@ -49,7 +49,7 @@ class TIMUIKitHistoryMessageListContainer extends StatefulWidget {
   final Widget Function(BuildContext context, V2TimMessage message)? userAvatarBuilder;
 
   /// the builder for tongue
-  final TongueItemBuilder? tongueItemBuilder;
+  final DeskTongueItemBuilder? tongueItemBuilder;
 
   final Widget? Function(V2TimMessage message, Function() closeTooltip, [Key? key, BuildContext? context])?
       extraTipsActionItemBuilder;
