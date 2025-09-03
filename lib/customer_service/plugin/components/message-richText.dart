@@ -28,12 +28,10 @@ class _MessageRichTextState extends TIMState<MessageRichText> {
   }
 
   defaultTapLink(href) {
-    final Uri _url = Uri.parse(href ?? '');
-
-    canLaunchUrl(_url).then((a) {
-      launchUrl(_url);
-    }).catchError((e) {
-    });
+    launchUrl(
+      Uri.parse(href ?? ''),
+      mode: LaunchMode.externalApplication,
+    );
   }
 
   @override
@@ -47,7 +45,7 @@ class _MessageRichTextState extends TIMState<MessageRichText> {
               if (widget.onTapLink == null) {
                 defaultTapLink(href);
               } else {
-                widget.onTapLink!(text, href, title);
+                widget.onTapLink!(href);
               }
             },
             imageBuilder: (uri, title, alt) {
