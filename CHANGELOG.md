@@ -1,10 +1,17 @@
+# 1.6.1+1
+
+## Added
+
+- Introduced `TencentCloudCustomerEventHandler` to enable advanced event handling customization, including callbacks for link taps, message interactions, and message list actions. This allows control over message rendering and list management. For detailed usage, refer to the method comments for each callback.
+- Supported passing `eventHandler` during `init` and `navigate`, available globally and per conversation.
+
 # 1.6.0
 
 ## Added
 
-- Introduced `TencentCloudCustomerMessageBuilders`, available both globally and per conversation, to override individual widgets and fully customize the UI.
-- Provided `TencentCloudDeskCustomerController` for each conversation, enabling advanced control of the UIKit, including sending messages, reloading the message list, and more.
-- Supported `backgroundImageAsset` in `TencentCloudCustomerConfig` to customize the chat background image.
+- Introduced `TencentCloudCustomerMessageBuilders`, available globally and per conversation (passed during `init` or `navigate`), to customize UI by overriding individual widgets.
+- Provided `TencentCloudDeskCustomerController` for each conversation (passed during `navigate`), enabling advanced control of the UIKit, including message sending, reloading the message list, and more.
+- Supported `backgroundImageAsset` in `TencentCloudCustomerConfig` for customizing the chat background image.
 
 ## Optimized
 

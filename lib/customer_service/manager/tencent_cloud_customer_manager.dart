@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/manager/tencent_cloud_customer_manager_impl.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_builders.dart';
+import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_event_handler.dart';
 import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/controller/tim_uikit_chat_controller.dart';
 
@@ -24,6 +25,7 @@ class TencentCloudCustomerManager {
     String? avatar,
     TencentCloudCustomerConfig? config,
     TencentCloudCustomerMessageBuilders? builders,
+    TencentCloudCustomerEventHandler? eventHandler,
   }) async {
     return _tencentCloudCustomerManagerImpl.init(
       sdkAppID: sdkAppID,
@@ -33,6 +35,7 @@ class TencentCloudCustomerManager {
       avatar: avatar,
       config: config,
       builders: builders,
+      eventHandler: eventHandler,
     );
   }
 
@@ -42,6 +45,7 @@ class TencentCloudCustomerManager {
     TencentCloudCustomerConfig? config,
     TencentCloudCustomerMessageBuilders? builders,
     TencentCloudDeskCustomerController? controller,
+    TencentCloudCustomerEventHandler? eventHandler,
   }) {
     return _tencentCloudCustomerManagerImpl.navigate(
       customerServiceID: customerServiceID,
@@ -49,6 +53,7 @@ class TencentCloudCustomerManager {
       context: context,
       builders: builders,
       controller: controller,
+      eventHandler: eventHandler,
     );
   }
 

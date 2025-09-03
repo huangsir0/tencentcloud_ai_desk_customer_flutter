@@ -5,8 +5,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MessageStream extends StatefulWidget {
   final dynamic payload;
+  final void Function(String url)? onTapLink;
 
-  const MessageStream({super.key, this.payload});
+  const MessageStream({
+    super.key,
+    this.payload,
+    this.onTapLink,
+  });
 
   @override
   State<StatefulWidget> createState() => _MessageStreamState();
@@ -43,10 +48,14 @@ class _MessageStreamState extends TIMState<MessageStream> {
           String? href,
           String title,
         ) {
-          launchUrl(
-            Uri.parse(link),
-            mode: LaunchMode.externalApplication,
-          );
+          if(widget.onTapLink != null) {
+            widget.onTapLink!(link);
+          } else {
+            launchUrl(
+              Uri.parse(link),
+              mode: LaunchMode.externalApplication,
+            );
+          }
         },
       ),
     );
