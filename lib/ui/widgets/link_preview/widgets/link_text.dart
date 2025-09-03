@@ -63,7 +63,7 @@ class LinkTextMarkdown extends TIMStatelessWidget {
       ),
       extensionSet: md.ExtensionSet.gitHubWeb,
       onTapLink: (
-        String link,
+        String text,
         String? href,
         String title,
       ) {
