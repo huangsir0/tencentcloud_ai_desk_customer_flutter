@@ -26,10 +26,13 @@ class _MessageProductCardState extends TIMState<MessageProductCard> {
     final Uri _url = Uri.parse(widget.payload['url']);
 
     Future<void> _launchUrl() async {
-      if(widget.onTapLink != null){
+      if (widget.onTapLink != null) {
         widget.onTapLink!(widget.payload['url']);
       } else {
-        if (!await launchUrl(_url)) {
+        if (!await launchUrl(
+          _url,
+          mode: LaunchMode.externalApplication,
+        )) {
           throw Exception('Could not launch $_url');
         }
       }

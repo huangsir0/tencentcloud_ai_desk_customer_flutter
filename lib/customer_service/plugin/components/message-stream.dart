@@ -44,15 +44,15 @@ class _MessageStreamState extends TIMState<MessageStream> {
           p: const TextStyle(color: Colors.black),
         ),
         onTapLink: (
-          String link,
+          String text,
           String? href,
           String title,
         ) {
           if(widget.onTapLink != null) {
-            widget.onTapLink!(link);
+            widget.onTapLink!(href ?? "");
           } else {
             launchUrl(
-              Uri.parse(link),
+              Uri.parse(href ?? ""),
               mode: LaunchMode.externalApplication,
             );
           }
