@@ -5,8 +5,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MessageProductCard extends StatefulWidget {
   final dynamic payload;
+  final void Function(String url)? onTapLink;
 
-  const MessageProductCard({super.key, this.payload});
+  const MessageProductCard({
+    super.key,
+    this.payload,
+    this.onTapLink,
+  });
 
   @override
   State<StatefulWidget> createState() => _MessageProductCardState();
@@ -21,8 +26,12 @@ class _MessageProductCardState extends TIMState<MessageProductCard> {
     final Uri _url = Uri.parse(widget.payload['url']);
 
     Future<void> _launchUrl() async {
-      if (!await launchUrl(_url)) {
-        throw Exception('Could not launch $_url');
+      if(widget.onTapLink != null){
+        widget.onTapLink!(widget.payload['url']);
+      } else {
+        if (!await launchUrl(_url)) {
+          throw Exception('Could not launch $_url');
+        }
       }
     }
 
@@ -38,7 +47,6 @@ class _MessageProductCardState extends TIMState<MessageProductCard> {
               width: 88.0,
               fit: BoxFit.fill,
               errorBuilder: (context, error, stackTrace) {
-
                 return Container(
                   alignment: Alignment.center,
                   child: const Image(
@@ -70,7 +78,8 @@ class _MessageProductCardState extends TIMState<MessageProductCard> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    style: const TextStyle(fontSize: 16, color: Colors.deepOrange),
+                    style:
+                        const TextStyle(fontSize: 16, color: Colors.deepOrange),
                     desc,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

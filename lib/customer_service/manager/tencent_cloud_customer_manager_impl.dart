@@ -7,6 +7,7 @@ import 'package:tencent_desk_i18n_tool/language_json/strings.g.dart';
 import 'package:tencentcloud_ai_desk_customer/base_widgets/tim_callback.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/data/tencent_cloud_customer_data.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_builders.dart';
+import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_event_handler.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/utils/tencent_cloud_customer_logger.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/utils/tencent_cloud_customer_toast.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/widgets/tencent_cloud_customer_message_container.dart';
@@ -16,6 +17,8 @@ import 'package:tencentcloud_ai_desk_customer/data_services/services_locatar.dar
 import 'package:tencentcloud_ai_desk_customer/tencentcloud_ai_desk_customer.dart';
 import 'package:tencentcloud_ai_desk_customer/ui/controller/tim_uikit_chat_controller.dart';
 
+import '../../ui/views/TIMUIKitChat/TIMUIKItMessageList/tim_uikit_chat_history_message_list_item.dart';
+
 typedef TencentCloudCustomerInit = Future<V2TimCallback> Function({
   TencentCloudCustomerConfig? config,
   required int sdkAppID,
@@ -24,6 +27,7 @@ typedef TencentCloudCustomerInit = Future<V2TimCallback> Function({
   String? nickName,
   String? avatar,
   TencentCloudCustomerMessageBuilders? builders,
+  TencentCloudCustomerEventHandler? eventHandler,
 });
 typedef TencentCloudCustomerNavigate = V2TimCallback Function({
   TencentCloudCustomerConfig? config,
@@ -31,6 +35,7 @@ typedef TencentCloudCustomerNavigate = V2TimCallback Function({
   required BuildContext context,
   String? customerServiceID,
   TencentCloudDeskCustomerController? controller,
+  TencentCloudCustomerEventHandler? eventHandler,
 });
 typedef TencentCloudCustomerDispose = Future<V2TimCallback> Function();
 
@@ -49,6 +54,7 @@ class TencentCloudCustomerManagerImpl {
     String? avatar,
     TencentCloudCustomerConfig? config,
     TencentCloudCustomerMessageBuilders? builders,
+    TencentCloudCustomerEventHandler? eventHandler,
   }) async {
     setupIMServiceLocator();
     TencentCloudCustomerLogger().init();
@@ -109,6 +115,8 @@ class TencentCloudCustomerManagerImpl {
             config ?? _tencentCloudCustomerData.globalConfig;
         _tencentCloudCustomerData.globalBuilders =
             builders ?? _tencentCloudCustomerData.globalBuilders;
+        _tencentCloudCustomerData.globalEventHandler =
+            eventHandler ?? _tencentCloudCustomerData.globalEventHandler;
         _initializedFailedRes = null;
         TencentCloudCustomerLogger().reportLogin(
           sdkAppId: sdkAppID,
@@ -141,6 +149,7 @@ class TencentCloudCustomerManagerImpl {
     TencentCloudCustomerConfig? config,
     TencentCloudCustomerMessageBuilders? builders,
     TencentCloudDeskCustomerController? controller,
+    TencentCloudCustomerEventHandler? eventHandler,
   }) {
     if (_initializedFailedRes != null) {
       return _initializedFailedRes!;
@@ -150,6 +159,8 @@ class TencentCloudCustomerManagerImpl {
         _tencentCloudCustomerData.globalConfig.mergeWith(config);
     final targetBuilders =
         _tencentCloudCustomerData.globalBuilders.mergeWith(builders);
+    final targetEventHandler =
+        _tencentCloudCustomerData.globalEventHandler.mergeWith(eventHandler);
     if (config?.language != null) {
       TDeskI18nUtils(null, languageLocaleToString[config?.language]);
     }
@@ -162,6 +173,7 @@ class TencentCloudCustomerManagerImpl {
           config: targetConfig,
           builder: targetBuilders,
           controller: controller ?? TencentCloudDeskCustomerController(),
+          eventHandler: targetEventHandler,
         ),
       ),
     );

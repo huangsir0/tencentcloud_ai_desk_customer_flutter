@@ -7,6 +7,7 @@ import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_full_info.dart';
 import 'package:tencent_cloud_chat_sdk/tencent_im_sdk_plugin.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/data/tencent_cloud_customer_data.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_builders.dart';
+import 'package:tencentcloud_ai_desk_customer/customer_service/model/tencent_cloud_customer_message_event_handler.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/plugin/components/message-bubble-button.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/plugin/components/message-customer-service.dart';
 import 'package:tencentcloud_ai_desk_customer/customer_service/plugin/tencent_cloud_chat_customer_service_plugin.dart';
@@ -34,6 +35,7 @@ class TencentCloudCustomerMessageContainer extends StatefulWidget {
   final TencentCloudCustomerConfig config;
   final TencentCloudCustomerMessageBuilders builder;
   final TencentCloudDeskCustomerController controller;
+  final TencentCloudCustomerEventHandler eventHandler;
 
   const TencentCloudCustomerMessageContainer({
     super.key,
@@ -41,6 +43,7 @@ class TencentCloudCustomerMessageContainer extends StatefulWidget {
     required this.config,
     required this.builder,
     required this.controller,
+    required this.eventHandler,
   });
 
   @override
@@ -246,8 +249,12 @@ class _TencentCloudCustomerMessageContainerState
                           .isCustomerServiceMessageInvisible(message) &&
                       !(message.isSelf ?? true);
                 }
-                return true;
+                return widget.eventHandler.shouldMountMessage(message);
               },
+              messageDidSend: widget.eventHandler.didSendMessage,
+              shouldDeleteMessage: widget.eventHandler.shouldDeleteMessage,
+              shouldClearHistoricalMessageList: widget.eventHandler.shouldClearMessageList,
+              messageListShouldMount: widget.eventHandler.shouldMountMessageList,
             ),
             morePanelConfig: MorePanelConfig(
               showVideoCall: false,
@@ -259,6 +266,7 @@ class _TencentCloudCustomerMessageContainerState
               showTranslation: false,
             ),
             config: TIMUIKitChatConfig(
+              onTapLink: widget.eventHandler.onTapLink,
               isUseMessageReaction: false,
               isShowAvatar: false,
               textHeight: kTextHeightNone,
@@ -327,6 +335,7 @@ class _TencentCloudCustomerMessageContainerState
                     messageBackgroundColor: Colors.white,
                     theme: theme,
                     isShowJumpState: isShowJump,
+                    onTapLink: widget.eventHandler.onTapLink,
                     sendMessage: widget.controller.sendMessage,
                   );
                   return Column(

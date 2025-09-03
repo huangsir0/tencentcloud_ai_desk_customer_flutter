@@ -17,7 +17,6 @@ import 'package:tencentcloud_ai_desk_customer/customer_service/plugin/components
 import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart';
 import 'package:tencentcloud_ai_desk_customer/theme/tui_theme.dart';
 
-
 class MessageCustomerService extends StatefulWidget {
   final TUITheme theme;
   final V2TimMessage message;
@@ -26,7 +25,8 @@ class MessageCustomerService extends StatefulWidget {
   final Color? messageBackgroundColor;
   final BorderRadius? messageBorderRadius;
   final Function sendMessage;
-  final Function? onTapLink;
+  final void Function(String url)? onTapLink;
+
   const MessageCustomerService(
       {super.key,
       required this.theme,
@@ -123,7 +123,10 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
               border: Border.all(color: Colors.grey, width: 0.5),
               borderRadius: widget.messageBorderRadius ?? borderRadius,
             ),
-            child: MessageProductCard(payload: payload));
+            child: MessageProductCard(
+              payload: payload,
+              onTapLink: widget.onTapLink,
+            ));
       case CUSTOM_MESSAGE_SRC.BRANCH:
         try {
           payload = mapData["content"];
@@ -143,8 +146,7 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
       case CUSTOM_MESSAGE_SRC.ORDER_CARD:
         try {
           payload = mapData["content"];
-        } catch (err) {
-        }
+        } catch (err) {}
         return Container(
             padding: (widget.textPadding ?? const EdgeInsets.all(10)),
             decoration: BoxDecoration(
@@ -157,8 +159,7 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
       case CUSTOM_MESSAGE_SRC.ROBOT_WELCOME_CARD:
         try {
           payload = mapData["content"];
-        } catch (err) {
-        }
+        } catch (err) {}
         return Container(
             padding: (const EdgeInsets.symmetric(horizontal: 14, vertical: 12)),
             decoration: BoxDecoration(
@@ -172,8 +173,7 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
       case CUSTOM_MESSAGE_SRC.RICH_TEXT:
         try {
           payload = jsonEncode(mapData["content"]);
-        } catch (err) {
-        }
+        } catch (err) {}
         return Container(
             padding: (widget.textPadding ?? const EdgeInsets.all(10)),
             decoration: BoxDecoration(
@@ -187,8 +187,7 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
       case CUSTOM_MESSAGE_SRC.STREAM_TEXT:
         try {
           payload = mapData;
-        } catch (err) {
-        }
+        } catch (err) {}
         return Container(
             padding: (widget.textPadding ?? const EdgeInsets.all(10)),
             decoration: BoxDecoration(
@@ -197,6 +196,7 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
             ),
             child: MessageStream(
               payload: payload,
+              onTapLink: widget.onTapLink,
             ));
       case CUSTOM_MESSAGE_SRC.BRANCH_MESSAGE:
         try {
@@ -204,8 +204,7 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
           payload["status"] = mapData["status"];
           payload["optionType"] = mapData["optionType"] ?? 0;
           payload["taskInfo"] = mapData["taskInfo"];
-        } catch (err) {
-        }
+        } catch (err) {}
         return MessageBranchNew(
           payload: payload,
           onClickItem: widget.sendMessage,
@@ -223,7 +222,8 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
             ),
             child: MessageForm(
               payload: mapData,
-              onClickItem: ({V2TimMessage? messageInfo}) => widget.sendMessage(messageInfo: messageInfo),
+              onClickItem: ({V2TimMessage? messageInfo}) =>
+                  widget.sendMessage(messageInfo: messageInfo),
             ));
       case CUSTOM_MESSAGE_SRC.MODEL_THINKING:
         return Align(
@@ -246,8 +246,8 @@ class _MessageCustomerServiceState extends State<MessageCustomerService> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
-                mapData["content"],
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
+              mapData["content"],
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
           ),
         );
